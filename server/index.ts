@@ -4,6 +4,8 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { seedDatabase } from "./seed";
 
+console.log("[startup] Starting server initialization...");
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -60,41 +62,59 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  await seedDatabase();
-  await registerRoutes(httpServer, app);
+async function startServer() {
+  try {
+    console.log("[startup] Seeding database...");
+    await seedDatabase();
+    console.log("[startup] Database seeding complete");
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    console.log("[startup] Registering routes...");
+    await registerRoutes(httpServer, app);
+    console.log("[startup] Routes registered");
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+      console.error("[error]", err);
+      res.status(status).json({ message });
+    });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (process.env.NODE_ENV === "production") {
-    serveStatic(app);
-  } else {
-    const { setupVite } = await import("./vite");
-    await setupVite(httpServer, app);
+    if (process.env.NODE_ENV === "production") {
+      console.log("[startup] Setting up static file serving for production...");
+      serveStatic(app);
+      console.log("[startup] Static file serving configured");
+    } else {
+      console.log("[startup] Setting up Vite for development...");
+      const { setupVite } = await import("./vite");
+      await setupVite(httpServer, app);
+      console.log("[startup] Vite configured");
+    }
+
+    const port = parseInt(process.env.PORT || "5000", 10);
+    
+    httpServer.on("error", (err) => {
+      console.error("[startup] Server error:", err);
+      process.exit(1);
+    });
+
+    httpServer.listen(
+      {
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      },
+      () => {
+        console.log(`[startup] Server is now listening on http://0.0.0.0:${port}`);
+        log(`serving on port ${port}`);
+      },
+    );
+  } catch (error) {
+    console.error("[startup] Fatal error during server initialization:", error);
+    process.exit(1);
   }
+}
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
-  httpServer.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
-})();
+startServer().catch((error) => {
+  console.error("[startup] Unhandled error in startServer:", error);
+  process.exit(1);
+});
