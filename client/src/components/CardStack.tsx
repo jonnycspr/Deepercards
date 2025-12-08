@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SwipeCard from './SwipeCard';
 import PremiumTeaser from './PremiumTeaser';
@@ -14,8 +14,8 @@ interface CardStackProps {
   maxQuestionsPerCategory?: number;
 }
 
-const STACK_OFFSET = 8;
-const STACK_SCALE_DIFF = 0.04;
+const STACK_OFFSET = 6;
+const STACK_SCALE_DIFF = 0.035;
 
 export default function CardStack({
   questions,
@@ -44,21 +44,21 @@ export default function CardStack({
 
   const visibleCards = filteredQuestions.slice(currentIndex, currentIndex + 4);
 
-  const handleSwipeRight = () => {
+  const handleSwipeRight = useCallback(() => {
     const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeRight(currentQuestion.id);
       setCurrentIndex(prev => prev + 1);
     }
-  };
+  }, [visibleCards, onSwipeRight]);
 
-  const handleSwipeLeft = () => {
+  const handleSwipeLeft = useCallback(() => {
     const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeLeft(currentQuestion.id);
       setCurrentIndex(prev => prev + 1);
     }
-  };
+  }, [visibleCards, onSwipeLeft]);
 
   if (visibleCards.length === 0) {
     return (
@@ -84,7 +84,7 @@ export default function CardStack({
 
   return (
     <div className="relative h-[calc(100vh-180px)] max-h-[730px] min-h-[400px] w-full" data-testid="card-stack">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence initial={false}>
         {visibleCards.map((question, index) => {
           const category = categories.find(c => c.id === question.categoryId);
           if (!category) return null;
@@ -93,68 +93,41 @@ export default function CardStack({
           const stackPosition = index;
           
           const yOffset = stackPosition * STACK_OFFSET;
-          const scale = 1 - (stackPosition * STACK_SCALE_DIFF);
-          const opacity = 1 - (stackPosition * 0.1);
-
-          if (isTop) {
-            return (
-              <SwipeCard
-                key={`card-${question.id}`}
-                question={question}
-                category={category}
-                onSwipeRight={handleSwipeRight}
-                onSwipeLeft={handleSwipeLeft}
-                isTop={true}
-                style={{ zIndex: 10 - index }}
-              />
-            );
-          }
+          const cardScale = 1 - (stackPosition * STACK_SCALE_DIFF);
 
           return (
             <motion.div
-              key={`card-${question.id}`}
-              className="absolute w-full"
+              key={question.id}
+              className="absolute inset-x-0"
               initial={{ 
-                scale: scale - STACK_SCALE_DIFF, 
-                y: yOffset + STACK_OFFSET, 
-                opacity: opacity - 0.15 
+                scale: cardScale - STACK_SCALE_DIFF,
+                y: yOffset + STACK_OFFSET,
               }}
               animate={{ 
-                scale, 
-                y: yOffset, 
-                opacity,
+                scale: cardScale,
+                y: yOffset,
               }}
               exit={{ 
-                scale: scale + STACK_SCALE_DIFF, 
-                y: yOffset - STACK_OFFSET, 
-                opacity: opacity + 0.1,
+                opacity: 0,
               }}
               transition={{ 
-                type: 'spring', 
-                stiffness: 400, 
-                damping: 30,
+                type: 'spring',
+                stiffness: 350,
+                damping: 28,
                 mass: 0.8,
               }}
-              style={{ zIndex: 10 - index }}
+              style={{ 
+                zIndex: 10 - index,
+                transformOrigin: 'center bottom',
+              }}
             >
-              <div
-                className="rounded-2xl p-6 h-[calc(100vh-200px)] max-h-[670px] min-h-[380px] shadow-lg flex flex-col"
-                style={{
-                  background: `linear-gradient(135deg, ${category.colorPrimary} 0%, ${category.colorSecondary} 100%)`,
-                }}
-              >
-                <div className="mb-4">
-                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/25 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wide">
-                    <span className="text-base">{category.icon}</span>
-                    {category.name}
-                  </span>
-                </div>
-                <div className="flex-1 flex items-center justify-center">
-                  <p className="text-white text-2xl font-medium text-center leading-relaxed drop-shadow-sm">
-                    {question.questionText}
-                  </p>
-                </div>
-              </div>
+              <SwipeCard
+                question={question}
+                category={category}
+                onSwipeRight={isTop ? handleSwipeRight : undefined}
+                onSwipeLeft={isTop ? handleSwipeLeft : undefined}
+                isTop={isTop}
+              />
             </motion.div>
           );
         })}
