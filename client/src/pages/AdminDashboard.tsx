@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const { data: session } = useQuery<{ isAdmin: boolean }>({
+  const { data: session, isLoading: sessionLoading } = useQuery<{ isAdmin: boolean }>({
     queryKey: ['/api/admin/session'],
   });
 
@@ -50,6 +50,17 @@ export default function AdminDashboard() {
       toast({ title: 'Logout failed', variant: 'destructive' });
     }
   };
+
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Skeleton className="h-8 w-32 mx-auto mb-2" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!session?.isAdmin) {
     setLocation('/admin');
