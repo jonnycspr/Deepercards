@@ -63,7 +63,7 @@ export default function CardStack({
   if (visibleCards.length === 0) {
     return (
       <motion.div 
-        className="flex items-center justify-center h-[calc(100vh-180px)] max-h-[730px] min-h-[400px] text-muted-foreground text-center px-8"
+        className="flex items-center justify-center h-[calc(100dvh-180px)] max-h-[730px] min-h-[350px] text-muted-foreground text-center px-8"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -83,7 +83,7 @@ export default function CardStack({
   }
 
   return (
-    <div className="relative h-[calc(100vh-180px)] max-h-[730px] min-h-[400px] w-full" data-testid="card-stack">
+    <div className="relative h-[calc(100dvh-180px)] max-h-[730px] min-h-[350px] w-full" data-testid="card-stack">
       <AnimatePresence initial={false}>
         {visibleCards.map((question, index) => {
           const category = categories.find(c => c.id === question.categoryId);

@@ -110,7 +110,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
       whileDrag={{ cursor: 'grabbing' }}
     >
       <motion.div
-        className="relative rounded-2xl p-6 h-[calc(100vh-200px)] max-h-[670px] min-h-[380px] flex flex-col shadow-xl overflow-hidden"
+        className="relative rounded-2xl p-6 h-[calc(100dvh-200px)] max-h-[670px] min-h-[330px] flex flex-col shadow-xl overflow-hidden"
         style={{
           background: `linear-gradient(135deg, ${category.colorPrimary} 0%, ${category.colorSecondary} 100%)`,
         }}
