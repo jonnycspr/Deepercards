@@ -1,0 +1,181 @@
+
+Build a mobile-first progressive web application called "Deeper" — a Christian dating conversation card app with swipeable question cards and an admin CMS.
+
+## TECH STACK
+- Frontend: HTML, CSS, JavaScript (vanilla or lightweight framework)
+- Backend: Node.js with Express
+- Database: SQLite (simple) or PostgreSQL
+- Authentication: Simple admin login for CMS
+
+---
+
+## CORE CONCEPT
+Couples swipe through conversation question cards together. Swipe RIGHT = "discussed", swipe LEFT = "save for later". No skip option — every question must eventually be faced.
+
+---
+
+## DATABASE STRUCTURE
+
+### Questions Table
+- id (primary key)
+- question_text (string)
+- category_id (foreign key)
+- is_premium (boolean, default false)
+- created_at (timestamp)
+
+### Categories Table
+- id (primary key)
+- name (string)
+- color_primary (hex)
+- color_secondary (hex)
+- icon (string/emoji)
+- order (integer)
+
+### User Progress (stored in localStorage for free version)
+- answered_questions: array of question IDs
+- saved_for_later: array of question IDs
+- current_filters: array of category IDs
+
+---
+
+## FRONTEND FEATURES
+
+### 1. Onboarding (first visit only, use cookies)
+- Welcome screen with app purpose
+- Brief 3-step tutorial showing swipe mechanics
+- "Start Conversations" button
+- Set cookie to skip onboarding on return visits
+
+### 2. Main Card Screen
+- Card stack fills 5/8 of screen height, centered
+- Cards show:
+  - Category label (top, styled per category)
+  - Question text (centered, large readable font)
+  - Card background uses category colors
+- Swipe animations:
+  - RIGHT: green glow, checkmark appears, card flies off right
+  - LEFT: orange/yellow glow, clock icon appears, card flies off left
+- Touch AND mouse drag support
+- Visual tilt based on drag direction
+
+### 3. Navigation Bar (bottom)
+- Home icon (main card stack)
+- Filter icon (category selection)
+- Journal icon with RED badge showing count of "saved for later" questions
+
+### 4. Category Filter Screen
+- Grid of 9 category cards
+- Each card shows category name, icon, color
+- Toggle on/off to filter which categories appear
+- "Show All" and "Clear All" buttons
+
+### 5. Conversation Journal Screen
+- Two tabs: "Saved for Later" (default) | "Discussed"
+- List view of questions with category color indicator
+- Saved for Later: 
+  - Shows red count badge in tab
+  - Tap question to move it back to top of deck
+- Discussed:
+  - Shows checkmark
+  - Greyed out styling
+  - Count of completed questions
+- Progress bar at top showing overall completion
+
+### 6. Free Version Limits
+- Show maximum 10 questions per category
+- After 10th question in a category, show teaser card:
+  "Want to go deeper? Unlock all 264 questions with Premium"
+- Store which questions have been shown in localStorage
+
+---
+
+## ADMIN CMS (route: /admin)
+
+### Login
+- Simple username/password authentication
+- Redirect to dashboard on success
+
+### Dashboard
+- Total questions count
+- Questions per category breakdown
+- Quick add question button
+
+### Questions Management
+- Table view of all questions
+- Columns: ID, Question (truncated), Category, Premium, Actions
+- Search/filter by category
+- Add new question:
+  - Text input for question
+  - Category dropdown
+  - Premium toggle (for future use)
+- Edit question: inline or modal
+- Delete question: with confirmation
+- Bulk import: CSV upload (columns: question_text, category_name)
+
+### Categories Management
+- List of 9 categories
+- Edit: name, primary color, secondary color, icon
+- Reorder via drag-and-drop
+- Preview card style in real-time
+
+---
+
+## VISUAL DESIGN
+
+### General
+- Clean, warm, modern aesthetic
+- Rounded corners (16px on cards)
+- Soft shadows
+- Font: Inter or similar clean sans-serif
+- Mobile-first: max-width 480px centered on larger screens
+
+### Category Color Suggestions (admin can change)
+1. Faith & Spirituality — Deep purple
+2. Family & Upbringing — Warm orange
+3. Marriage Expectations — Rose/pink
+4. Communication — Sky blue
+5. Finances — Green
+6. Intimacy — Soft red
+7. Life Goals — Teal
+8. Conflict Resolution — Amber
+9. Fun & Lifestyle — Yellow
+
+### Animations
+- Card swipe: spring physics, natural feel
+- Badge count: subtle pulse when number increases
+- Screen transitions: smooth fade/slide
+
+---
+
+## TECHNICAL REQUIREMENTS
+- Fully responsive (mobile-first)
+- Works offline after initial load (PWA optional)
+- LocalStorage for user progress (no login for users)
+- API endpoints:
+  - GET /api/questions (with optional category filter)
+  - GET /api/categories
+  - POST/PUT/DELETE /api/admin/questions
+  - POST/PUT/DELETE /api/admin/categories
+- Secure admin routes with session authentication
+
+---
+
+## FILE STRUCTURE
+/public
+  /css
+  /js
+  index.html
+/admin
+  index.html
+  /css
+  /js
+/server
+  index.js
+  /routes
+  /db
+/database
+  schema.sql
+
+---
+
+Please build this complete application with all features functional. Start with the database schema, then build the admin CMS, then the frontend card experience.
