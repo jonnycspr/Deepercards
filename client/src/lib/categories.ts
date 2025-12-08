@@ -8,15 +8,15 @@ export interface Category {
 }
 
 export const defaultCategories: Category[] = [
-  { id: 1, name: "Faith & Spirituality", icon: "✝", colorPrimary: "#6B46C1", colorSecondary: "#8B5CF6", order: 1 },
-  { id: 2, name: "Family & Upbringing", icon: "🏠", colorPrimary: "#EA580C", colorSecondary: "#FB923C", order: 2 },
-  { id: 3, name: "Marriage Expectations", icon: "💍", colorPrimary: "#E11D48", colorSecondary: "#FB7185", order: 3 },
-  { id: 4, name: "Communication", icon: "💬", colorPrimary: "#0284C7", colorSecondary: "#38BDF8", order: 4 },
-  { id: 5, name: "Finances", icon: "💰", colorPrimary: "#059669", colorSecondary: "#34D399", order: 5 },
-  { id: 6, name: "Intimacy", icon: "❤", colorPrimary: "#DC2626", colorSecondary: "#F87171", order: 6 },
-  { id: 7, name: "Life Goals", icon: "🎯", colorPrimary: "#0D9488", colorSecondary: "#2DD4BF", order: 7 },
-  { id: 8, name: "Conflict Resolution", icon: "🤝", colorPrimary: "#D97706", colorSecondary: "#FBBF24", order: 8 },
-  { id: 9, name: "Fun & Lifestyle", icon: "🌟", colorPrimary: "#CA8A04", colorSecondary: "#FDE047", order: 9 },
+  { id: 1, name: "Faith & Spirituality", icon: "✝", colorPrimary: "#6F3FF0", colorSecondary: "#F1E7FF", order: 1 },
+  { id: 2, name: "Family & Upbringing", icon: "🏠", colorPrimary: "#FF66C4", colorSecondary: "#FFE5F4", order: 2 },
+  { id: 3, name: "Marriage Expectations", icon: "💍", colorPrimary: "#FF8A66", colorSecondary: "#FFE1D2", order: 3 },
+  { id: 4, name: "Communication", icon: "💬", colorPrimary: "#4DAAFF", colorSecondary: "#D6ECFF", order: 4 },
+  { id: 5, name: "Finances", icon: "💰", colorPrimary: "#5EE6A8", colorSecondary: "#DDFBEF", order: 5 },
+  { id: 6, name: "Intimacy", icon: "❤", colorPrimary: "#C084FF", colorSecondary: "#F3E8FF", order: 6 },
+  { id: 7, name: "Life Goals", icon: "🎯", colorPrimary: "#1EC6C3", colorSecondary: "#D7F7F6", order: 7 },
+  { id: 8, name: "Conflict Resolution", icon: "🤝", colorPrimary: "#FF9F4A", colorSecondary: "#FFE2C4", order: 8 },
+  { id: 9, name: "Fun & Lifestyle", icon: "🌟", colorPrimary: "#FFD54A", colorSecondary: "#FFF4C2", order: 9 },
 ];
 
 export interface Question {
