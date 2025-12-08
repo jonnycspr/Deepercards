@@ -121,7 +121,7 @@ export default function SwipeCard({
       initial={{ scale: isTop ? 1 : 0.95, y: isTop ? 0 : 12 }}
     >
       <motion.div
-        className="relative rounded-2xl p-8 min-h-[320px] flex flex-col shadow-xl overflow-hidden select-none"
+        className="relative rounded-2xl p-8 min-h-[480px] flex flex-col shadow-xl overflow-hidden select-none"
         style={{
           background: cardBackground,
         }}
