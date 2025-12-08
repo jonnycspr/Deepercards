@@ -138,11 +138,23 @@ export default function CardStack({
               style={{ zIndex: 10 - index }}
             >
               <div
-                className="rounded-2xl p-6 h-[calc(100vh-200px)] max-h-[670px] min-h-[380px] shadow-lg"
+                className="rounded-2xl p-6 h-[calc(100vh-200px)] max-h-[670px] min-h-[380px] shadow-lg flex flex-col"
                 style={{
                   background: `linear-gradient(135deg, ${category.colorPrimary} 0%, ${category.colorSecondary} 100%)`,
                 }}
-              />
+              >
+                <div className="mb-4">
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/25 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wide">
+                    <span className="text-base">{category.icon}</span>
+                    {category.name}
+                  </span>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-white text-2xl font-medium text-center leading-relaxed drop-shadow-sm">
+                    {question.questionText}
+                  </p>
+                </div>
+              </div>
             </motion.div>
           );
         })}
