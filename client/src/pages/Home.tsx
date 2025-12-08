@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion';
 import CardStack from '@/components/CardStack';
@@ -6,8 +7,8 @@ import BottomNav from '@/components/BottomNav';
 import CategoryFilter from '@/components/CategoryFilter';
 import ConversationJournal from '@/components/ConversationJournal';
 import Onboarding from '@/components/Onboarding';
-import { defaultCategories, mockQuestions } from '@/lib/categories';
 import { useLocalStorage, defaultProgress, UserProgress } from '@/lib/useLocalStorage';
+import type { Category, Question } from '@shared/schema';
 
 type NavTab = 'home' | 'filter' | 'journal';
 
@@ -15,6 +16,14 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [progress, setProgress] = useLocalStorage<UserProgress>('deeper-progress', defaultProgress);
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
+    queryKey: ['/api/categories'],
+  });
+
+  const { data: questions = [], isLoading: questionsLoading } = useQuery<Question[]>({
+    queryKey: ['/api/questions'],
+  });
 
   useEffect(() => {
     const hasSeenOnboarding = Cookies.get('deeper-onboarding-complete');
@@ -54,7 +63,7 @@ export default function Home() {
   const handleShowAllCategories = () => {
     setProgress(prev => ({
       ...prev,
-      currentFilters: defaultCategories.map(c => c.id),
+      currentFilters: categories.map(c => c.id),
     }));
   };
 
@@ -73,9 +82,36 @@ export default function Home() {
     setActiveTab('home');
   };
 
+  useEffect(() => {
+    if (categories.length > 0 && progress.currentFilters.length === 0) {
+      setProgress(prev => ({
+        ...prev,
+        currentFilters: categories.map(c => c.id),
+      }));
+    }
+  }, [categories]);
+
   if (showOnboarding) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
+
+  const isLoading = categoriesLoading || questionsLoading;
+
+  const transformedCategories = categories.map(c => ({
+    id: c.id,
+    name: c.name,
+    icon: c.icon,
+    colorPrimary: c.colorPrimary,
+    colorSecondary: c.colorSecondary,
+    order: c.order,
+  }));
+
+  const transformedQuestions = questions.map(q => ({
+    id: q.id,
+    questionText: q.questionText,
+    categoryId: q.categoryId,
+    isPremium: q.isPremium,
+  }));
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -99,13 +135,19 @@ export default function Home() {
               transition={{ duration: 0.2 }}
               className="px-4"
             >
-              <CardStack
-                questions={mockQuestions}
-                categories={defaultCategories}
-                progress={progress}
-                onSwipeRight={handleSwipeRight}
-                onSwipeLeft={handleSwipeLeft}
-              />
+              {isLoading ? (
+                <div className="flex items-center justify-center h-[400px]">
+                  <div className="text-muted-foreground">Loading questions...</div>
+                </div>
+              ) : (
+                <CardStack
+                  questions={transformedQuestions}
+                  categories={transformedCategories}
+                  progress={progress}
+                  onSwipeRight={handleSwipeRight}
+                  onSwipeLeft={handleSwipeLeft}
+                />
+              )}
               
               <div className="mt-8 text-center text-sm text-muted-foreground">
                 <p>Swipe right for "discussed"</p>
@@ -123,7 +165,7 @@ export default function Home() {
               transition={{ duration: 0.2 }}
             >
               <CategoryFilter
-                categories={defaultCategories}
+                categories={transformedCategories}
                 selectedCategories={progress.currentFilters}
                 onToggleCategory={handleToggleCategory}
                 onShowAll={handleShowAllCategories}
@@ -141,8 +183,8 @@ export default function Home() {
               transition={{ duration: 0.2 }}
             >
               <ConversationJournal
-                questions={mockQuestions}
-                categories={defaultCategories}
+                questions={transformedQuestions}
+                categories={transformedCategories}
                 savedQuestions={progress.savedForLater}
                 answeredQuestions={progress.answeredQuestions}
                 onMoveToTop={handleMoveToTop}
