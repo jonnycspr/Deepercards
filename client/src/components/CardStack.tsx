@@ -86,7 +86,7 @@ export default function CardStack({
   if (!currentCategory) return null;
 
   return (
-    <div className="relative h-[780px] w-full" data-testid="card-stack">
+    <div className="relative h-[730px] w-full" data-testid="card-stack">
       <AnimatePresence mode="popLayout">
         {thirdQuestion && thirdCategory && (
           <motion.div
@@ -99,7 +99,7 @@ export default function CardStack({
             style={{ zIndex: 0 }}
           >
             <div
-              className="rounded-2xl p-8 min-h-[720px] shadow-md"
+              className="rounded-2xl p-8 min-h-[670px] shadow-md"
               style={{
                 background: `linear-gradient(135deg, ${thirdCategory.colorPrimary} 0%, ${thirdCategory.colorSecondary} 100%)`,
               }}
@@ -118,7 +118,7 @@ export default function CardStack({
             style={{ zIndex: 1 }}
           >
             <div
-              className="rounded-2xl p-8 min-h-[720px] shadow-lg"
+              className="rounded-2xl p-8 min-h-[670px] shadow-lg"
               style={{
                 background: `linear-gradient(135deg, ${nextCategory.colorPrimary} 0%, ${nextCategory.colorSecondary} 100%)`,
               }}
