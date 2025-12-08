@@ -121,7 +121,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
       initial={{ scale: isTop ? 1 : 0.95, y: isTop ? 0 : 12 }}
     >
       <motion.div
-        className="relative rounded-2xl p-8 min-h-[670px] flex flex-col shadow-xl overflow-hidden select-none"
+        className="relative rounded-2xl p-6 h-[calc(100vh-200px)] max-h-[670px] min-h-[380px] flex flex-col shadow-xl overflow-hidden select-none"
         style={{
           background: cardBackground,
         }}
