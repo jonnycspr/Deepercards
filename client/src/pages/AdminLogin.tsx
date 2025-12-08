@@ -21,9 +21,9 @@ export default function AdminLogin() {
 
     try {
       await apiRequest('POST', '/api/admin/login', { username, password });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/session'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/admin/session'] });
       toast({ title: 'Login successful', description: 'Welcome to the admin dashboard' });
-      setLocation('/admin/dashboard');
+      window.location.href = '/admin/dashboard';
     } catch (error) {
       toast({ title: 'Login failed', description: 'Invalid username or password', variant: 'destructive' });
     } finally {
