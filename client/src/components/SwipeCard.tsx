@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo, useAnimation } from 'framer-motion';
 import { Check, Clock } from 'lucide-react';
 import { Category, Question } from '@/lib/categories';
@@ -12,14 +12,14 @@ interface SwipeCardProps {
   style?: React.CSSProperties;
 }
 
-export default function SwipeCard({
+const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
   question,
   category,
   onSwipeRight,
   onSwipeLeft,
   isTop = true,
   style,
-}: SwipeCardProps) {
+}, ref) => {
   const controls = useAnimation();
   const constraintsRef = useRef(null);
   
@@ -102,7 +102,7 @@ export default function SwipeCard({
 
   return (
     <motion.div
-      ref={constraintsRef}
+      ref={ref}
       data-testid={`card-question-${question.id}`}
       className="absolute w-full cursor-grab active:cursor-grabbing touch-none"
       style={{
@@ -205,4 +205,8 @@ export default function SwipeCard({
       </motion.div>
     </motion.div>
   );
-}
+});
+
+SwipeCard.displayName = 'SwipeCard';
+
+export default SwipeCard;

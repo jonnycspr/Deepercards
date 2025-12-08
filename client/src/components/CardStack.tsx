@@ -14,6 +14,9 @@ interface CardStackProps {
   maxQuestionsPerCategory?: number;
 }
 
+const STACK_OFFSET = 8;
+const STACK_SCALE_DIFF = 0.04;
+
 export default function CardStack({
   questions,
   categories,
@@ -39,11 +42,10 @@ export default function CardStack({
     });
   }, [questions, progress, maxQuestionsPerCategory]);
 
-  const currentQuestion = filteredQuestions[currentIndex];
-  const nextQuestion = filteredQuestions[currentIndex + 1];
-  const thirdQuestion = filteredQuestions[currentIndex + 2];
+  const visibleCards = filteredQuestions.slice(currentIndex, currentIndex + 4);
 
   const handleSwipeRight = () => {
+    const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeRight(currentQuestion.id);
       setCurrentIndex(prev => prev + 1);
@@ -51,16 +53,17 @@ export default function CardStack({
   };
 
   const handleSwipeLeft = () => {
+    const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeLeft(currentQuestion.id);
       setCurrentIndex(prev => prev + 1);
     }
   };
 
-  if (!currentQuestion) {
+  if (visibleCards.length === 0) {
     return (
       <motion.div 
-        className="flex items-center justify-center h-[400px] text-muted-foreground text-center px-8"
+        className="flex items-center justify-center h-[730px] text-muted-foreground text-center px-8"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -79,62 +82,70 @@ export default function CardStack({
     );
   }
 
-  const currentCategory = categories.find(c => c.id === currentQuestion.categoryId);
-  const nextCategory = nextQuestion ? categories.find(c => c.id === nextQuestion.categoryId) : null;
-  const thirdCategory = thirdQuestion ? categories.find(c => c.id === thirdQuestion.categoryId) : null;
-
-  if (!currentCategory) return null;
-
   return (
     <div className="relative h-[730px] w-full" data-testid="card-stack">
       <AnimatePresence mode="popLayout">
-        {thirdQuestion && thirdCategory && (
-          <motion.div
-            key={`third-${thirdQuestion.id}`}
-            className="absolute w-full"
-            initial={{ scale: 0.85, y: 24, opacity: 0.5 }}
-            animate={{ scale: 0.9, y: 24, opacity: 0.7 }}
-            exit={{ scale: 0.95, y: 12, opacity: 0.9 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            style={{ zIndex: 0 }}
-          >
-            <div
-              className="rounded-2xl p-8 min-h-[670px] shadow-md"
-              style={{
-                background: `linear-gradient(135deg, ${thirdCategory.colorPrimary} 0%, ${thirdCategory.colorSecondary} 100%)`,
+        {visibleCards.map((question, index) => {
+          const category = categories.find(c => c.id === question.categoryId);
+          if (!category) return null;
+
+          const isTop = index === 0;
+          const stackPosition = index;
+          
+          const yOffset = stackPosition * STACK_OFFSET;
+          const scale = 1 - (stackPosition * STACK_SCALE_DIFF);
+          const opacity = 1 - (stackPosition * 0.1);
+
+          if (isTop) {
+            return (
+              <SwipeCard
+                key={`card-${question.id}`}
+                question={question}
+                category={category}
+                onSwipeRight={handleSwipeRight}
+                onSwipeLeft={handleSwipeLeft}
+                isTop={true}
+                style={{ zIndex: 10 - index }}
+              />
+            );
+          }
+
+          return (
+            <motion.div
+              key={`card-${question.id}`}
+              className="absolute w-full"
+              initial={{ 
+                scale: scale - STACK_SCALE_DIFF, 
+                y: yOffset + STACK_OFFSET, 
+                opacity: opacity - 0.15 
               }}
-            />
-          </motion.div>
-        )}
-        
-        {nextQuestion && nextCategory && (
-          <motion.div
-            key={`next-${nextQuestion.id}`}
-            className="absolute w-full"
-            initial={{ scale: 0.9, y: 24, opacity: 0.7 }}
-            animate={{ scale: 0.95, y: 12, opacity: 0.9 }}
-            exit={{ scale: 1, y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            style={{ zIndex: 1 }}
-          >
-            <div
-              className="rounded-2xl p-8 min-h-[670px] shadow-lg"
-              style={{
-                background: `linear-gradient(135deg, ${nextCategory.colorPrimary} 0%, ${nextCategory.colorSecondary} 100%)`,
+              animate={{ 
+                scale, 
+                y: yOffset, 
+                opacity,
               }}
-            />
-          </motion.div>
-        )}
-        
-        <SwipeCard
-          key={`current-${currentQuestion.id}`}
-          question={currentQuestion}
-          category={currentCategory}
-          onSwipeRight={handleSwipeRight}
-          onSwipeLeft={handleSwipeLeft}
-          isTop={true}
-          style={{ zIndex: 2 }}
-        />
+              exit={{ 
+                scale: scale + STACK_SCALE_DIFF, 
+                y: yOffset - STACK_OFFSET, 
+                opacity: opacity + 0.1,
+              }}
+              transition={{ 
+                type: 'spring', 
+                stiffness: 400, 
+                damping: 30,
+                mass: 0.8,
+              }}
+              style={{ zIndex: 10 - index }}
+            >
+              <div
+                className="rounded-2xl p-8 min-h-[670px] shadow-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${category.colorPrimary} 0%, ${category.colorSecondary} 100%)`,
+                }}
+              />
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
 
       {showPremiumTeaser && (
