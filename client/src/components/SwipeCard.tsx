@@ -101,7 +101,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
 
   const textColor = category.textColor || '#FFFFFF';
   const borderColor = category.borderColor || '#FFFFFF';
-  const borderWidth = category.borderWidth || 8;
+  const borderWidth = 32; // Fixed 32px border as per Figma design
 
   return (
     <motion.div
@@ -158,9 +158,29 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
             </>
           )}
 
-          <div className="flex-1 flex flex-col items-center justify-center px-8 py-12 relative z-10">
+          {/* Top section: Image placeholder left, category name right */}
+          <div className="flex items-center justify-between px-8 pt-6 pb-4 relative z-10">
+            {/* Image placeholder */}
+            <div 
+              className="w-16 h-20 rounded-[20px] flex items-center justify-center"
+              style={{ 
+                backgroundColor: 'rgba(0, 0, 0, 0.15)',
+              }}
+            >
+              {category.imageUrl ? (
+                <img 
+                  src={category.imageUrl} 
+                  alt={category.name}
+                  className="w-full h-full object-cover rounded-[20px]"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-white/30" />
+              )}
+            </div>
+            
+            {/* Category name */}
             <p 
-              className="text-3xl font-semibold text-center leading-relaxed"
+              className="text-xl font-medium text-right"
               style={{ 
                 color: textColor,
                 fontFamily: "'DM Sans', sans-serif",
@@ -168,18 +188,19 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
             >
               {category.name}
             </p>
-            
-            <div className="mt-8 w-full max-w-[280px]">
-              <p 
-                className="text-xl font-medium text-center leading-relaxed opacity-90"
-                style={{ 
-                  color: textColor,
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                {question.questionText}
-              </p>
-            </div>
+          </div>
+
+          {/* Question text - larger and centered */}
+          <div className="flex-1 flex items-center justify-center px-10 relative z-10">
+            <p 
+              className="text-3xl font-semibold text-center leading-snug"
+              style={{ 
+                color: textColor,
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              {question.questionText}
+            </p>
           </div>
 
           {isTop && (
