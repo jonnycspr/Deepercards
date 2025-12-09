@@ -11,7 +11,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,12 +20,12 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      await apiRequest('POST', '/api/admin/login', { username, password });
+      await apiRequest('POST', '/api/admin/login', { email, password });
       await queryClient.invalidateQueries({ queryKey: ['/api/admin/session'] });
       toast({ title: 'Login successful', description: 'Welcome to the admin dashboard' });
-      window.location.href = '/admin/dashboard';
+      setLocation('/admin/dashboard');
     } catch (error) {
-      toast({ title: 'Login failed', description: 'Invalid username or password', variant: 'destructive' });
+      toast({ title: 'Login failed', description: 'Invalid email or password', variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -44,15 +44,15 @@ export default function AdminLogin() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email"
                 required
-                data-testid="input-username"
+                data-testid="input-email"
               />
             </div>
             <div className="space-y-2">

@@ -94,16 +94,16 @@ export async function seedDatabase() {
     console.log("Questions already exist, skipping...");
   }
   
-  const existingAdmin = await db.select().from(users).where(eq(users.username, "admin"));
+  const existingAdmin = await db.select().from(users).where(eq(users.email, "j.caspari@mail.de"));
   
   if (existingAdmin.length === 0) {
     console.log("Creating admin user...");
     const hashedPassword = await bcrypt.hash("deeper2024", 10);
     await db.insert(users).values({
-      username: "admin",
+      email: "j.caspari@mail.de",
       password: hashedPassword,
     });
-    console.log("Admin user created! Username: admin, Password: deeper2024");
+    console.log("Admin user created! Email: j.caspari@mail.de, Password: deeper2024");
   } else {
     console.log("Admin user already exists, skipping...");
   }

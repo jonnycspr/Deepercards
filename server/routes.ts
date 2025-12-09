@@ -36,7 +36,7 @@ export async function registerRoutes(
         secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
       },
     })
   );
@@ -68,13 +68,13 @@ export async function registerRoutes(
 
   app.post("/api/admin/login", async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
       
-      if (!username || !password) {
-        return res.status(400).json({ message: "Username and password required" });
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password required" });
       }
       
-      const user = await storage.getUserByUsername(username);
+      const user = await storage.getUserByEmail(email);
       
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -87,7 +87,12 @@ export async function registerRoutes(
       }
       
       req.session.isAdmin = true;
-      res.json({ message: "Login successful", username: user.username });
+      req.session.save((err) => {
+        if (err) {
+          return res.status(500).json({ message: "Session save failed" });
+        }
+        res.json({ message: "Login successful", email: user.email });
+      });
     } catch (error) {
       res.status(500).json({ message: "Login failed" });
     }
