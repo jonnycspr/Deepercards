@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { runMigrations } from "./migrate";
 import { seedDatabase } from "./seed";
 
 console.log("[startup] Starting server initialization...");
@@ -64,6 +65,10 @@ app.use((req, res, next) => {
 
 async function startServer() {
   try {
+    console.log("[startup] Running database migrations...");
+    await runMigrations();
+    console.log("[startup] Migrations complete");
+
     console.log("[startup] Seeding database...");
     await seedDatabase();
     console.log("[startup] Database seeding complete");
