@@ -178,7 +178,7 @@ export default function Home() {
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setActivePanel('cards')}
-                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
                     data-testid="button-close-filter"
                   >
                     <X className="w-5 h-5 text-gray-600" />
@@ -210,7 +210,7 @@ export default function Home() {
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setActivePanel('cards')}
-                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center"
                     data-testid="button-close-journal"
                   >
                     <X className="w-5 h-5 text-gray-600" />
@@ -237,10 +237,7 @@ export default function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActivePanel('filter')}
-              className="fixed bottom-6 left-6 w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center z-50"
-              style={{
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
-              }}
+              className="fixed bottom-6 left-6 w-16 h-16 rounded-full bg-white flex items-center justify-center z-50"
               data-testid="button-topics"
             >
               <Grid3X3 className="w-7 h-7 text-gray-700" />
@@ -253,10 +250,7 @@ export default function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActivePanel('journal')}
-              className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center z-50"
-              style={{
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
-              }}
+              className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-white flex items-center justify-center z-50"
               data-testid="button-journal"
             >
               <BookOpen className="w-7 h-7 text-gray-700" />

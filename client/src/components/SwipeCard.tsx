@@ -191,10 +191,10 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
                   scale: rightIndicatorScale,
                 }}
               >
-                <motion.div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-xl border-4 border-white">
+                <motion.div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center border-4 border-white">
                   <Check className="w-8 h-8 text-white" strokeWidth={3} />
                 </motion.div>
-                <p className="text-white text-xs font-bold text-center mt-2 uppercase tracking-wide drop-shadow-lg">
+                <p className="text-white text-xs font-bold text-center mt-2 uppercase tracking-wide">
                   Discussed
                 </p>
               </motion.div>
@@ -206,10 +206,10 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
                   scale: leftIndicatorScale,
                 }}
               >
-                <motion.div className="w-16 h-16 rounded-full bg-amber-500 flex items-center justify-center shadow-xl border-4 border-white">
+                <motion.div className="w-16 h-16 rounded-full bg-amber-500 flex items-center justify-center border-4 border-white">
                   <Clock className="w-8 h-8 text-white" strokeWidth={3} />
                 </motion.div>
-                <p className="text-white text-xs font-bold text-center mt-2 uppercase tracking-wide drop-shadow-lg">
+                <p className="text-white text-xs font-bold text-center mt-2 uppercase tracking-wide">
                   Save
                 </p>
               </motion.div>
