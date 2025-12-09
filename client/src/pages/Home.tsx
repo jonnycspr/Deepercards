@@ -145,7 +145,7 @@ export default function Home() {
                 <img 
                   src={deeperLogo} 
                   alt="Deeper" 
-                  className="h-10 object-contain"
+                  className="h-16 object-contain"
                 />
               </div>
               {isLoading ? (
