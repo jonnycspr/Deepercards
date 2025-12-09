@@ -74,38 +74,50 @@ const sampleQuestions = [
 export async function seedDatabase() {
   console.log("Checking if database needs seeding...");
   
-  const existingCategories = await db.select().from(categories);
-  
-  if (existingCategories.length === 0) {
-    console.log("Seeding categories...");
-    await db.insert(categories).values(defaultCategories);
-    console.log("Categories seeded successfully!");
-  } else {
-    console.log("Categories already exist, skipping...");
+  try {
+    const existingCategories = await db.select().from(categories);
+    
+    if (existingCategories.length === 0) {
+      console.log("Seeding categories...");
+      await db.insert(categories).values(defaultCategories);
+      console.log("Categories seeded successfully!");
+    } else {
+      console.log("Categories already exist, skipping...");
+    }
+  } catch (error) {
+    console.error("Error seeding categories:", error);
   }
   
-  const existingQuestions = await db.select().from(questions);
-  
-  if (existingQuestions.length === 0) {
-    console.log("Seeding questions...");
-    await db.insert(questions).values(sampleQuestions);
-    console.log("Questions seeded successfully!");
-  } else {
-    console.log("Questions already exist, skipping...");
+  try {
+    const existingQuestions = await db.select().from(questions);
+    
+    if (existingQuestions.length === 0) {
+      console.log("Seeding questions...");
+      await db.insert(questions).values(sampleQuestions);
+      console.log("Questions seeded successfully!");
+    } else {
+      console.log("Questions already exist, skipping...");
+    }
+  } catch (error) {
+    console.error("Error seeding questions:", error);
   }
   
-  const existingAdmin = await db.select().from(users).where(eq(users.email, "j.caspari@mail.de"));
-  
-  if (existingAdmin.length === 0) {
-    console.log("Creating admin user...");
-    const hashedPassword = await bcrypt.hash("deeper2024", 10);
-    await db.insert(users).values({
-      email: "j.caspari@mail.de",
-      password: hashedPassword,
-    });
-    console.log("Admin user created! Email: j.caspari@mail.de, Password: deeper2024");
-  } else {
-    console.log("Admin user already exists, skipping...");
+  try {
+    const existingAdmin = await db.select().from(users).where(eq(users.email, "j.caspari@mail.de"));
+    
+    if (existingAdmin.length === 0) {
+      console.log("Creating admin user...");
+      const hashedPassword = await bcrypt.hash("deeper2024", 10);
+      await db.insert(users).values({
+        email: "j.caspari@mail.de",
+        password: hashedPassword,
+      });
+      console.log("Admin user created! Email: j.caspari@mail.de, Password: deeper2024");
+    } else {
+      console.log("Admin user already exists, skipping...");
+    }
+  } catch (error) {
+    console.error("Error seeding admin user:", error);
   }
   
   console.log("Database seeding complete!");
