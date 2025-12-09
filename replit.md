@@ -4,10 +4,12 @@
 Deeper is a mobile-first progressive web application for Christian couples to have meaningful conversations through faith-based discussion cards. Users swipe through question cards - swipe RIGHT to mark as "discussed", swipe LEFT to "save for later".
 
 ## Current State
-- Full MVP implementation complete
+- Full MVP implementation complete with Figma-matched design
 - Database seeded with 9 categories and 45 sample questions
 - Admin CMS functional with question and category management
 - Frontend connected to real API data
+- New card design with white outer border and colored inner content
+- Floating circular action buttons (Topics + Journal) replacing bottom nav
 
 ## Tech Stack
 - **Frontend**: React with TypeScript, Tailwind CSS, Framer Motion
@@ -49,8 +51,8 @@ shared/
 ```
 
 ## Database Schema
-- **users**: Admin users (id, username, password)
-- **categories**: 9 category types (name, icon, colors, order)
+- **users**: Admin users (id, email, password)
+- **categories**: 9 category types (name, icon, colors, order, fillType, gradientFrom/To, textColor, borderColor, borderWidth, imageUrl)
 - **questions**: Conversation questions (text, categoryId, isPremium)
 
 ## API Endpoints
@@ -73,7 +75,7 @@ shared/
 
 ## Admin Access
 - URL: `/admin`
-- Username: `admin`
+- Email: `j.caspari@mail.de`
 - Password: `deeper2024`
 
 ## User Progress
@@ -83,16 +85,18 @@ Stored in localStorage:
 - `currentFilters`: Active category IDs
 - Onboarding status stored in cookies
 
-## Color Palette (9 Categories)
-1. Faith & Spirituality - Deep Grape Purple (#6F3FF0)
-2. Family & Upbringing - Bubblegum Pink (#FF66C4)
-3. Marriage Expectations - Peach Coral (#FF8A66)
-4. Communication - Sky Blue (#4DAAFF)
-5. Finances - Fresh Mint Green (#5EE6A8)
-6. Intimacy - Soft Lilac (#C084FF)
-7. Life Goals - Aqua/Teal (#1EC6C3)
-8. Conflict Resolution - Warm Apricot (#FF9F4A)
-9. Fun & Lifestyle - Sunny Yellow (#FFD54A)
+## Color Palette (9 Categories - Updated Figma Design)
+1. Character and Personality - Red (#ff4d4f), text: #bf0000
+2. Origin and Family - Orange (#ff8500), text: #d54900
+3. Humor and Joy - Yellow (#ffdc54), text: #cda505
+4. Relationship and Communication - Teal (#008475), text: #43f2da
+5. Finances - Mint (#00c9b5), text: #195b5d
+6. Faith - Light Teal (#9ed1d6), text: #4b8085
+7. Sexuality - Purple (#8253ee), text: #c6a8ff
+8. Future and Marriage - Blue (#455fed), text: #acbeff
+9. Deep Topics - Navy (#004a7e), text: #92d6ff
+
+All categories use white borders (#FFFFFF, 8px width) for the card design.
 
 ## Recent Changes
 - December 2024: Initial MVP implementation
@@ -101,3 +105,9 @@ Stored in localStorage:
   - Admin CMS with full CRUD operations
   - CSV import functionality for bulk question upload
   - Frontend connected to real API data
+- December 2024: Figma Design Update
+  - New card design with white outer border (8px) and colored inner content
+  - Floating circular action buttons replacing bottom navigation
+  - DM Sans font applied globally
+  - Updated category color palette matching Figma mockups
+  - Runtime database migrations for production schema sync
