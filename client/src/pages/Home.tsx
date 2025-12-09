@@ -125,7 +125,7 @@ export default function Home() {
     <div 
       className="min-h-[100dvh] relative overflow-hidden"
       style={{ 
-        background: 'linear-gradient(180deg, #bdd7ff 0%, #e8f0ff 100%)',
+        background: '#BDD7FF',
         fontFamily: "'DM Sans', sans-serif",
       }}
     >
