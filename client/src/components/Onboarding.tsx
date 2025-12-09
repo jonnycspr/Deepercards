@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import deeperLogo from '@assets/Light_Blue_Deeper_1765293060014.png';
+import DeeperLogo from '@/components/DeeperLogo';
+import { useLocalStorage, defaultSettings, AppSettings } from '@/lib/useLocalStorage';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -30,6 +31,7 @@ const steps = [
 
 export default function Onboarding({ onComplete }: OnboardingProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [settings] = useLocalStorage<AppSettings>('deeper-settings', defaultSettings);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -42,7 +44,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const step = steps[currentStep];
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#BDE1FF' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: settings.backgroundColor }}>
       <div className="flex-1 flex flex-col items-center justify-center px-8">
         <AnimatePresence mode="wait">
           <motion.div
@@ -98,7 +100,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <img src={deeperLogo} alt="Deeper" className="h-24 object-contain" />
+                  <DeeperLogo color={settings.logoColor} className="h-24" />
                 </motion.div>
               ) : null}
             </div>

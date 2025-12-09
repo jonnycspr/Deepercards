@@ -9,7 +9,8 @@ import {
   MessageSquare, 
   FolderOpen, 
   LogOut,
-  Plus
+  Plus,
+  Palette
 } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -89,6 +90,10 @@ export default function AdminDashboard() {
             <Button variant="outline" onClick={() => setLocation('/admin/categories')} data-testid="nav-categories">
               <FolderOpen className="w-4 h-4 mr-2" />
               Categories
+            </Button>
+            <Button variant="outline" onClick={() => setLocation('/admin/settings')} data-testid="nav-settings">
+              <Palette className="w-4 h-4 mr-2" />
+              Theme
             </Button>
             <Button variant="ghost" onClick={handleLogout} data-testid="button-logout">
               <LogOut className="w-4 h-4 mr-2" />

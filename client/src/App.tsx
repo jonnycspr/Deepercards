@@ -9,6 +9,7 @@ import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminQuestions from "@/pages/AdminQuestions";
 import AdminCategories from "@/pages/AdminCategories";
+import AdminSettings from "@/pages/AdminSettings";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/admin/questions" component={AdminQuestions} />
       <Route path="/admin/categories" component={AdminCategories} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route component={NotFound} />
     </Switch>
   );

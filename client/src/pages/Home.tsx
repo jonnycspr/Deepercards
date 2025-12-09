@@ -7,9 +7,9 @@ import CardStack from '@/components/CardStack';
 import CategoryFilter from '@/components/CategoryFilter';
 import ConversationJournal from '@/components/ConversationJournal';
 import Onboarding from '@/components/Onboarding';
-import { useLocalStorage, defaultProgress, UserProgress } from '@/lib/useLocalStorage';
+import { useLocalStorage, defaultProgress, UserProgress, defaultSettings, AppSettings } from '@/lib/useLocalStorage';
 import type { Category, Question } from '@shared/schema';
-import deeperLogo from '@assets/Light_Blue_Deeper_1765293060014.png';
+import DeeperLogo from '@/components/DeeperLogo';
 
 type ActivePanel = 'cards' | 'filter' | 'journal';
 
@@ -17,6 +17,7 @@ export default function Home() {
   const [activePanel, setActivePanel] = useState<ActivePanel>('cards');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [progress, setProgress] = useLocalStorage<UserProgress>('deeper-progress', defaultProgress);
+  const [settings] = useLocalStorage<AppSettings>('deeper-settings', defaultSettings);
 
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
     queryKey: ['/api/categories'],
@@ -126,7 +127,7 @@ export default function Home() {
     <div 
       className="min-h-[100dvh] relative overflow-hidden"
       style={{ 
-        background: '#BDE1FF',
+        background: settings.backgroundColor,
         fontFamily: "'DM Sans', sans-serif",
       }}
     >
@@ -142,11 +143,7 @@ export default function Home() {
               className="flex-1 flex flex-col pt-6 pb-24 px-4"
             >
               <div className="flex justify-center mb-4">
-                <img 
-                  src={deeperLogo} 
-                  alt="Deeper" 
-                  className="h-16 object-contain"
-                />
+                <DeeperLogo color={settings.logoColor} className="h-16" />
               </div>
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">

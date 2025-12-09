@@ -37,3 +37,13 @@ export const defaultProgress: UserProgress = {
   currentFilters: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   shownQuestionsPerCategory: {},
 };
+
+export interface AppSettings {
+  logoColor: string;
+  backgroundColor: string;
+}
+
+export const defaultSettings: AppSettings = {
+  logoColor: '#A8D4F5',
+  backgroundColor: '#BDE1FF',
+};
