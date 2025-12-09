@@ -25,6 +25,14 @@ export const categories = pgTable("categories", {
   colorPrimary: text("color_primary").notNull(),
   colorSecondary: text("color_secondary").notNull(),
   order: integer("order").notNull().default(0),
+  fillType: text("fill_type").notNull().default("solid"),
+  gradientFrom: text("gradient_from"),
+  gradientTo: text("gradient_to"),
+  gradientAngle: integer("gradient_angle").default(180),
+  textColor: text("text_color"),
+  borderColor: text("border_color").default("#FFFFFF"),
+  borderWidth: integer("border_width").default(8),
+  imageUrl: text("image_url"),
 });
 
 export const categoriesRelations = relations(categories, ({ many }) => ({

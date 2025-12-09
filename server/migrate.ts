@@ -31,9 +31,28 @@ export async function runMigrations() {
         await db.execute(sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255)`);
         console.log("[migrate] Added email column");
       }
-    } else {
-      console.log("[migrate] Schema is up to date");
     }
+    
+    const categoryColumns = await db.execute(sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'categories' AND column_name = 'fill_type'
+    `);
+    
+    if (!categoryColumns.rows || categoryColumns.rows.length === 0) {
+      console.log("[migrate] Adding new category customization columns...");
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS fill_type TEXT DEFAULT 'solid'`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS gradient_from TEXT`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS gradient_to TEXT`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS gradient_angle INTEGER DEFAULT 180`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS text_color TEXT`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS border_color TEXT DEFAULT '#FFFFFF'`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS border_width INTEGER DEFAULT 8`);
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_url TEXT`);
+      console.log("[migrate] Category customization columns added");
+    }
+    
+    console.log("[migrate] Schema is up to date");
   } catch (error) {
     console.error("[migrate] Migration error:", error);
   }

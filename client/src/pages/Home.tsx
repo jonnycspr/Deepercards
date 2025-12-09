@@ -2,18 +2,18 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Grid3X3, BookOpen, X } from 'lucide-react';
 import CardStack from '@/components/CardStack';
-import BottomNav from '@/components/BottomNav';
 import CategoryFilter from '@/components/CategoryFilter';
 import ConversationJournal from '@/components/ConversationJournal';
 import Onboarding from '@/components/Onboarding';
 import { useLocalStorage, defaultProgress, UserProgress } from '@/lib/useLocalStorage';
 import type { Category, Question } from '@shared/schema';
 
-type NavTab = 'home' | 'filter' | 'journal';
+type ActivePanel = 'cards' | 'filter' | 'journal';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [activePanel, setActivePanel] = useState<ActivePanel>('cards');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [progress, setProgress] = useLocalStorage<UserProgress>('deeper-progress', defaultProgress);
 
@@ -79,7 +79,7 @@ export default function Home() {
       ...prev,
       savedForLater: prev.savedForLater.filter(id => id !== questionId),
     }));
-    setActiveTab('home');
+    setActivePanel('cards');
   };
 
   useEffect(() => {
@@ -104,6 +104,14 @@ export default function Home() {
     colorPrimary: c.colorPrimary,
     colorSecondary: c.colorSecondary,
     order: c.order,
+    fillType: c.fillType,
+    gradientFrom: c.gradientFrom,
+    gradientTo: c.gradientTo,
+    gradientAngle: c.gradientAngle,
+    textColor: c.textColor,
+    borderColor: c.borderColor,
+    borderWidth: c.borderWidth,
+    imageUrl: c.imageUrl,
   }));
 
   const transformedQuestions = questions.map(q => ({
@@ -114,30 +122,33 @@ export default function Home() {
   }));
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-[480px] mx-auto">
-        <header className="px-4 py-6 text-center">
-          <h1 className="text-2xl font-bold text-primary">Deeper</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {activeTab === 'home' && 'Swipe to explore'}
-            {activeTab === 'filter' && 'Choose your categories'}
-            {activeTab === 'journal' && 'Your conversation history'}
-          </p>
-        </header>
-
+    <div 
+      className="min-h-[100dvh] relative overflow-hidden"
+      style={{ 
+        background: 'linear-gradient(180deg, #bdd7ff 0%, #e8f0ff 100%)',
+        fontFamily: "'DM Sans', sans-serif",
+      }}
+    >
+      <div className="max-w-[480px] mx-auto h-[100dvh] flex flex-col relative">
         <AnimatePresence mode="wait">
-          {activeTab === 'home' && (
+          {activePanel === 'cards' && (
             <motion.div
-              key="home"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="px-4"
+              key="cards"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="flex-1 flex flex-col pt-8 pb-24 px-4"
             >
               {isLoading ? (
-                <div className="flex items-center justify-center h-[400px]">
-                  <div className="text-muted-foreground">Loading questions...</div>
+                <div className="flex-1 flex items-center justify-center">
+                  <motion.div 
+                    className="text-gray-600 text-lg font-medium"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    Loading cards...
+                  </motion.div>
                 </div>
               ) : (
                 <CardStack
@@ -148,57 +159,115 @@ export default function Home() {
                   onSwipeLeft={handleSwipeLeft}
                 />
               )}
-              
-              <div className="mt-8 text-center text-sm text-muted-foreground">
-                <p>Swipe right for "discussed"</p>
-                <p>Swipe left for "save for later"</p>
+            </motion.div>
+          )}
+
+          {activePanel === 'filter' && (
+            <motion.div
+              key="filter"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="flex-1 overflow-auto pb-24"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Topics</h2>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setActivePanel('cards')}
+                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
+                    data-testid="button-close-filter"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </motion.button>
+                </div>
+                <CategoryFilter
+                  categories={transformedCategories}
+                  selectedCategories={progress.currentFilters}
+                  onToggleCategory={handleToggleCategory}
+                  onShowAll={handleShowAllCategories}
+                  onClearAll={handleClearAllCategories}
+                />
               </div>
             </motion.div>
           )}
 
-          {activeTab === 'filter' && (
-            <motion.div
-              key="filter"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <CategoryFilter
-                categories={transformedCategories}
-                selectedCategories={progress.currentFilters}
-                onToggleCategory={handleToggleCategory}
-                onShowAll={handleShowAllCategories}
-                onClearAll={handleClearAllCategories}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === 'journal' && (
+          {activePanel === 'journal' && (
             <motion.div
               key="journal"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="flex-1 overflow-auto pb-24"
             >
-              <ConversationJournal
-                questions={transformedQuestions}
-                categories={transformedCategories}
-                savedQuestions={progress.savedForLater}
-                answeredQuestions={progress.answeredQuestions}
-                onMoveToTop={handleMoveToTop}
-              />
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Journal</h2>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setActivePanel('cards')}
+                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center"
+                    data-testid="button-close-journal"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </motion.button>
+                </div>
+                <ConversationJournal
+                  questions={transformedQuestions}
+                  categories={transformedCategories}
+                  savedQuestions={progress.savedForLater}
+                  answeredQuestions={progress.answeredQuestions}
+                  onMoveToTop={handleMoveToTop}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
 
-      <BottomNav
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        savedCount={progress.savedForLater.length}
-      />
+        {activePanel === 'cards' && (
+          <>
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.3, type: 'spring', stiffness: 400, damping: 20 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActivePanel('filter')}
+              className="fixed bottom-6 left-6 w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center z-50"
+              style={{
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
+              }}
+              data-testid="button-topics"
+            >
+              <Grid3X3 className="w-7 h-7 text-gray-700" />
+            </motion.button>
+
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.4, type: 'spring', stiffness: 400, damping: 20 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setActivePanel('journal')}
+              className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center z-50"
+              style={{
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1)',
+              }}
+              data-testid="button-journal"
+            >
+              <BookOpen className="w-7 h-7 text-gray-700" />
+              {progress.savedForLater.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-6 h-6 bg-amber-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {progress.savedForLater.length}
+                </span>
+              )}
+            </motion.button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -5,18 +5,26 @@ export interface Category {
   colorPrimary: string;
   colorSecondary: string;
   order: number;
+  fillType?: string;
+  gradientFrom?: string | null;
+  gradientTo?: string | null;
+  gradientAngle?: number | null;
+  textColor?: string | null;
+  borderColor?: string | null;
+  borderWidth?: number | null;
+  imageUrl?: string | null;
 }
 
 export const defaultCategories: Category[] = [
-  { id: 1, name: "Faith & Spirituality", icon: "✝", colorPrimary: "#6F3FF0", colorSecondary: "#F1E7FF", order: 1 },
-  { id: 2, name: "Family & Upbringing", icon: "🏠", colorPrimary: "#FF66C4", colorSecondary: "#FFE5F4", order: 2 },
-  { id: 3, name: "Marriage Expectations", icon: "💍", colorPrimary: "#FF8A66", colorSecondary: "#FFE1D2", order: 3 },
-  { id: 4, name: "Communication", icon: "💬", colorPrimary: "#4DAAFF", colorSecondary: "#D6ECFF", order: 4 },
-  { id: 5, name: "Finances", icon: "💰", colorPrimary: "#5EE6A8", colorSecondary: "#DDFBEF", order: 5 },
-  { id: 6, name: "Intimacy", icon: "❤", colorPrimary: "#C084FF", colorSecondary: "#F3E8FF", order: 6 },
-  { id: 7, name: "Life Goals", icon: "🎯", colorPrimary: "#1EC6C3", colorSecondary: "#D7F7F6", order: 7 },
-  { id: 8, name: "Conflict Resolution", icon: "🤝", colorPrimary: "#FF9F4A", colorSecondary: "#FFE2C4", order: 8 },
-  { id: 9, name: "Fun & Lifestyle", icon: "🌟", colorPrimary: "#FFD54A", colorSecondary: "#FFF4C2", order: 9 },
+  { id: 1, name: "Character and Personality", icon: "person", colorPrimary: "#ff4d4f", colorSecondary: "#ffcccc", order: 1, fillType: "solid", textColor: "#bf0000", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 2, name: "Origin and Family", icon: "home", colorPrimary: "#ff8500", colorSecondary: "#ffe0b3", order: 2, fillType: "solid", textColor: "#d54900", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 3, name: "Humor and Joy", icon: "smile", colorPrimary: "#ffdc54", colorSecondary: "#fff4c2", order: 3, fillType: "solid", textColor: "#cda505", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 4, name: "Relationship and Communication", icon: "chat", colorPrimary: "#008475", colorSecondary: "#b3e0db", order: 4, fillType: "solid", textColor: "#43f2da", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 5, name: "Finances", icon: "wallet", colorPrimary: "#00c9b5", colorSecondary: "#b3f0e9", order: 5, fillType: "solid", textColor: "#195b5d", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 6, name: "Faith", icon: "heart", colorPrimary: "#9ed1d6", colorSecondary: "#d9eff1", order: 6, fillType: "solid", textColor: "#4b8085", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 7, name: "Sexuality", icon: "heart", colorPrimary: "#8253ee", colorSecondary: "#d9ccf9", order: 7, fillType: "solid", textColor: "#c6a8ff", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 8, name: "Future and Marriage", icon: "ring", colorPrimary: "#455fed", colorSecondary: "#c9d4f9", order: 8, fillType: "solid", textColor: "#acbeff", borderColor: "#FFFFFF", borderWidth: 8 },
+  { id: 9, name: "Deep Topics", icon: "brain", colorPrimary: "#004a7e", colorSecondary: "#b3d4e8", order: 9, fillType: "solid", textColor: "#92d6ff", borderColor: "#FFFFFF", borderWidth: 8 },
 ];
 
 export interface Question {
