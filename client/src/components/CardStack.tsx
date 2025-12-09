@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SwipeCard from './SwipeCard';
 import PremiumTeaser from './PremiumTeaser';
@@ -25,7 +25,6 @@ export default function CardStack({
   onSwipeLeft,
   maxQuestionsPerCategory = 10,
 }: CardStackProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [showPremiumTeaser, setShowPremiumTeaser] = useState(false);
 
   const filteredQuestions = useMemo(() => {
@@ -42,13 +41,14 @@ export default function CardStack({
     });
   }, [questions, progress, maxQuestionsPerCategory]);
 
-  const visibleCards = filteredQuestions.slice(currentIndex, currentIndex + 4);
+  // Show up to 4 cards from the filtered list - no index needed since
+  // filteredQuestions already excludes answered/saved cards
+  const visibleCards = filteredQuestions.slice(0, 4);
 
   const handleSwipeRight = useCallback(() => {
     const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeRight(currentQuestion.id);
-      setCurrentIndex(prev => prev + 1);
     }
   }, [visibleCards, onSwipeRight]);
 
@@ -56,7 +56,6 @@ export default function CardStack({
     const currentQuestion = visibleCards[0];
     if (currentQuestion) {
       onSwipeLeft(currentQuestion.id);
-      setCurrentIndex(prev => prev + 1);
     }
   }, [visibleCards, onSwipeLeft]);
 
