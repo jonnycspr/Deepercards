@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Slider } from '@/components/ui/slider';
 import { ArrowLeft, Pencil, GripVertical } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -29,9 +31,9 @@ export default function AdminCategories() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Category> }) =>
       apiRequest('PUT', `/api/admin/categories/${id}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/categories'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/admin/categories'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       toast({ title: 'Category updated successfully' });
       setEditCategory(null);
     },
@@ -63,6 +65,14 @@ export default function AdminCategories() {
         icon: editCategory.icon,
         colorPrimary: editCategory.colorPrimary,
         colorSecondary: editCategory.colorSecondary,
+        fillType: editCategory.fillType,
+        gradientFrom: editCategory.gradientFrom,
+        gradientTo: editCategory.gradientTo,
+        gradientAngle: editCategory.gradientAngle,
+        textColor: editCategory.textColor,
+        borderColor: editCategory.borderColor,
+        borderWidth: editCategory.borderWidth,
+        imageUrl: editCategory.imageUrl,
       },
     });
   };
@@ -79,6 +89,16 @@ export default function AdminCategories() {
     const nextCategory = categories[index + 1];
     reorderMutation.mutate({ id: category.id, order: nextCategory.order });
     reorderMutation.mutate({ id: nextCategory.id, order: category.order });
+  };
+
+  const getCardBackground = (cat: Category) => {
+    if (cat.fillType === 'gradient' && cat.gradientFrom && cat.gradientTo) {
+      return `linear-gradient(${cat.gradientAngle || 180}deg, ${cat.gradientFrom} 0%, ${cat.gradientTo} 100%)`;
+    }
+    if (cat.fillType === 'image' && cat.imageUrl) {
+      return `url(${cat.imageUrl})`;
+    }
+    return cat.colorPrimary;
   };
 
   return (
@@ -145,11 +165,7 @@ export default function AdminCategories() {
                             style={{ backgroundColor: category.colorPrimary }}
                             title="Primary color"
                           />
-                          <div
-                            className="w-4 h-4 rounded border"
-                            style={{ backgroundColor: category.colorSecondary }}
-                            title="Secondary color"
-                          />
+                          <span className="text-xs text-muted-foreground">{category.fillType}</span>
                         </div>
                       </div>
                       <Dialog>
@@ -163,73 +179,262 @@ export default function AdminCategories() {
                             <Pencil className="w-4 h-4" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle>Edit Category</DialogTitle>
                           </DialogHeader>
                           {editCategory && (
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <Label>Name</Label>
-                                <Input
-                                  value={editCategory.name}
-                                  onChange={(e) =>
-                                    setEditCategory({ ...editCategory, name: e.target.value })
-                                  }
-                                  data-testid="input-edit-name"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label>Icon (emoji)</Label>
-                                <Input
-                                  value={editCategory.icon}
-                                  onChange={(e) =>
-                                    setEditCategory({ ...editCategory, icon: e.target.value })
-                                  }
-                                  data-testid="input-edit-icon"
-                                />
-                              </div>
+                            <div className="space-y-6">
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                  <Label>Primary Color</Label>
+                                  <Label>Name</Label>
+                                  <Input
+                                    value={editCategory.name}
+                                    onChange={(e) =>
+                                      setEditCategory({ ...editCategory, name: e.target.value })
+                                    }
+                                    data-testid="input-edit-name"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Icon (emoji)</Label>
+                                  <Input
+                                    value={editCategory.icon}
+                                    onChange={(e) =>
+                                      setEditCategory({ ...editCategory, icon: e.target.value })
+                                    }
+                                    data-testid="input-edit-icon"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
+                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Card Fill</h3>
+                                
+                                <div className="space-y-2">
+                                  <Label>Fill Type</Label>
+                                  <Select
+                                    value={editCategory.fillType}
+                                    onValueChange={(value) =>
+                                      setEditCategory({ ...editCategory, fillType: value })
+                                    }
+                                  >
+                                    <SelectTrigger data-testid="select-fill-type">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="solid">Solid Color</SelectItem>
+                                      <SelectItem value="gradient">Gradient</SelectItem>
+                                      <SelectItem value="image">Image</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                {editCategory.fillType === 'solid' && (
+                                  <div className="space-y-2">
+                                    <Label>Primary Color</Label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="color"
+                                        value={editCategory.colorPrimary}
+                                        onChange={(e) =>
+                                          setEditCategory({ ...editCategory, colorPrimary: e.target.value })
+                                        }
+                                        className="w-10 h-10 rounded cursor-pointer border-0"
+                                        data-testid="input-edit-primary-color"
+                                      />
+                                      <Input
+                                        value={editCategory.colorPrimary}
+                                        onChange={(e) =>
+                                          setEditCategory({ ...editCategory, colorPrimary: e.target.value })
+                                        }
+                                        className="font-mono text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {editCategory.fillType === 'gradient' && (
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label>Gradient From</Label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="color"
+                                            value={editCategory.gradientFrom || editCategory.colorPrimary}
+                                            onChange={(e) =>
+                                              setEditCategory({ ...editCategory, gradientFrom: e.target.value })
+                                            }
+                                            className="w-10 h-10 rounded cursor-pointer border-0"
+                                            data-testid="input-gradient-from"
+                                          />
+                                          <Input
+                                            value={editCategory.gradientFrom || ''}
+                                            onChange={(e) =>
+                                              setEditCategory({ ...editCategory, gradientFrom: e.target.value })
+                                            }
+                                            placeholder="#000000"
+                                            className="font-mono text-sm"
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label>Gradient To</Label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="color"
+                                            value={editCategory.gradientTo || editCategory.colorSecondary}
+                                            onChange={(e) =>
+                                              setEditCategory({ ...editCategory, gradientTo: e.target.value })
+                                            }
+                                            className="w-10 h-10 rounded cursor-pointer border-0"
+                                            data-testid="input-gradient-to"
+                                          />
+                                          <Input
+                                            value={editCategory.gradientTo || ''}
+                                            onChange={(e) =>
+                                              setEditCategory({ ...editCategory, gradientTo: e.target.value })
+                                            }
+                                            placeholder="#FFFFFF"
+                                            className="font-mono text-sm"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label>Gradient Angle: {editCategory.gradientAngle || 180}°</Label>
+                                      <Slider
+                                        value={[editCategory.gradientAngle || 180]}
+                                        onValueChange={([value]) =>
+                                          setEditCategory({ ...editCategory, gradientAngle: value })
+                                        }
+                                        min={0}
+                                        max={360}
+                                        step={15}
+                                        data-testid="slider-gradient-angle"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {editCategory.fillType === 'image' && (
+                                  <div className="space-y-2">
+                                    <Label>Image URL</Label>
+                                    <Input
+                                      value={editCategory.imageUrl || ''}
+                                      onChange={(e) =>
+                                        setEditCategory({ ...editCategory, imageUrl: e.target.value })
+                                      }
+                                      placeholder="https://example.com/image.jpg"
+                                      data-testid="input-image-url"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
+                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Text Color</h3>
+                                <div className="space-y-2">
+                                  <Label>Text Color</Label>
                                   <div className="flex items-center gap-2">
                                     <input
                                       type="color"
-                                      value={editCategory.colorPrimary}
+                                      value={editCategory.textColor || '#FFFFFF'}
                                       onChange={(e) =>
-                                        setEditCategory({ ...editCategory, colorPrimary: e.target.value })
+                                        setEditCategory({ ...editCategory, textColor: e.target.value })
                                       }
                                       className="w-10 h-10 rounded cursor-pointer border-0"
-                                      data-testid="input-edit-primary-color"
+                                      data-testid="input-text-color"
                                     />
                                     <Input
-                                      value={editCategory.colorPrimary}
+                                      value={editCategory.textColor || '#FFFFFF'}
                                       onChange={(e) =>
-                                        setEditCategory({ ...editCategory, colorPrimary: e.target.value })
+                                        setEditCategory({ ...editCategory, textColor: e.target.value })
                                       }
                                       className="font-mono text-sm"
                                     />
                                   </div>
                                 </div>
-                                <div className="space-y-2">
-                                  <Label>Secondary Color</Label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="color"
-                                      value={editCategory.colorSecondary}
-                                      onChange={(e) =>
-                                        setEditCategory({ ...editCategory, colorSecondary: e.target.value })
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
+                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Card Border</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label>Border Color</Label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="color"
+                                        value={editCategory.borderColor || '#FFFFFF'}
+                                        onChange={(e) =>
+                                          setEditCategory({ ...editCategory, borderColor: e.target.value })
+                                        }
+                                        className="w-10 h-10 rounded cursor-pointer border-0"
+                                        data-testid="input-border-color"
+                                      />
+                                      <Input
+                                        value={editCategory.borderColor || '#FFFFFF'}
+                                        onChange={(e) =>
+                                          setEditCategory({ ...editCategory, borderColor: e.target.value })
+                                        }
+                                        className="font-mono text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label>Border Width: {editCategory.borderWidth || 8}px</Label>
+                                    <Slider
+                                      value={[editCategory.borderWidth || 8]}
+                                      onValueChange={([value]) =>
+                                        setEditCategory({ ...editCategory, borderWidth: value })
                                       }
-                                      className="w-10 h-10 rounded cursor-pointer border-0"
-                                      data-testid="input-edit-secondary-color"
+                                      min={0}
+                                      max={20}
+                                      step={1}
+                                      data-testid="slider-border-width"
                                     />
-                                    <Input
-                                      value={editCategory.colorSecondary}
-                                      onChange={(e) =>
-                                        setEditCategory({ ...editCategory, colorSecondary: e.target.value })
-                                      }
-                                      className="font-mono text-sm"
-                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
+                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Card Preview</h3>
+                                <div
+                                  className="rounded-[32px] p-2"
+                                  style={{
+                                    backgroundColor: editCategory.borderColor || '#FFFFFF',
+                                    padding: `${editCategory.borderWidth || 8}px`,
+                                  }}
+                                >
+                                  <div
+                                    className="rounded-[24px] p-6 min-h-[200px] flex flex-col"
+                                    style={{
+                                      background: getCardBackground(editCategory),
+                                      backgroundSize: 'cover',
+                                      backgroundPosition: 'center',
+                                    }}
+                                  >
+                                    <div className="flex-1 flex flex-col items-center justify-center">
+                                      <p 
+                                        className="text-2xl font-semibold text-center"
+                                        style={{ 
+                                          color: editCategory.textColor || '#FFFFFF',
+                                          fontFamily: "'DM Sans', sans-serif",
+                                        }}
+                                      >
+                                        {editCategory.name}
+                                      </p>
+                                      <p 
+                                        className="mt-4 text-base text-center opacity-90"
+                                        style={{ 
+                                          color: editCategory.textColor || '#FFFFFF',
+                                          fontFamily: "'DM Sans', sans-serif",
+                                        }}
+                                      >
+                                        Sample question text would appear here...
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -254,31 +459,51 @@ export default function AdminCategories() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Card Preview</CardTitle>
+              <CardTitle>Quick Preview</CardTitle>
             </CardHeader>
             <CardContent>
               {editCategory ? (
                 <div
-                  className="rounded-2xl p-6 min-h-[200px] flex flex-col"
+                  className="rounded-[32px]"
                   style={{
-                    background: `linear-gradient(135deg, ${editCategory.colorPrimary} 0%, ${editCategory.colorSecondary} 100%)`,
+                    backgroundColor: editCategory.borderColor || '#FFFFFF',
+                    padding: `${editCategory.borderWidth || 8}px`,
+                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <div className="mb-4">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold uppercase tracking-wide">
-                      <span>{editCategory.icon}</span>
-                      {editCategory.name}
-                    </span>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <p className="text-white text-xl font-medium text-center">
-                      Sample question text would appear here...
-                    </p>
+                  <div
+                    className="rounded-[24px] p-6 min-h-[300px] flex flex-col"
+                    style={{
+                      background: getCardBackground(editCategory),
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                      <p 
+                        className="text-3xl font-semibold text-center"
+                        style={{ 
+                          color: editCategory.textColor || '#FFFFFF',
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >
+                        {editCategory.name}
+                      </p>
+                      <p 
+                        className="mt-6 text-xl text-center opacity-90 max-w-[280px]"
+                        style={{ 
+                          color: editCategory.textColor || '#FFFFFF',
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >
+                        Sample question text would appear here...
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-2xl p-6 min-h-[200px] flex items-center justify-center bg-muted text-muted-foreground">
-                  Select a category to preview
+                <div className="rounded-2xl p-6 min-h-[300px] flex items-center justify-center bg-muted text-muted-foreground">
+                  Click edit on a category to see preview
                 </div>
               )}
             </CardContent>

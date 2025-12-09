@@ -111,3 +111,8 @@ All categories use white borders (#FFFFFF, 8px width) for the card design.
   - DM Sans font applied globally
   - Updated category color palette matching Figma mockups
   - Runtime database migrations for production schema sync
+  - Admin CMS now includes full card design customization:
+    - Fill Type (solid/gradient/image)
+    - Gradient colors and angle
+    - Text color, border color, border width
+    - Live card preview matching SwipeCard design
