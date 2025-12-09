@@ -101,7 +101,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
 
   const textColor = category.textColor || '#FFFFFF';
   const borderColor = category.borderColor || '#FFFFFF';
-  const borderWidth = 16; // Fixed 16px border
+  const borderWidth = 12; // Fixed 12px border
 
   return (
     <motion.div
