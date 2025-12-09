@@ -42,7 +42,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const Icon = step.icon;
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col">
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#BDE1FF' }}>
       <div className="flex-1 flex flex-col items-center justify-center px-8">
         <AnimatePresence mode="wait">
           <motion.div

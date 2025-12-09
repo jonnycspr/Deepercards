@@ -9,7 +9,7 @@ import ConversationJournal from '@/components/ConversationJournal';
 import Onboarding from '@/components/Onboarding';
 import { useLocalStorage, defaultProgress, UserProgress } from '@/lib/useLocalStorage';
 import type { Category, Question } from '@shared/schema';
-import deeperLogo from '@assets/Deeper_Logo_Blue_1765292365506.png';
+import deeperLogo from '@assets/Light_Blue_Deeper_1765293060014.png';
 
 type ActivePanel = 'cards' | 'filter' | 'journal';
 
@@ -126,7 +126,7 @@ export default function Home() {
     <div 
       className="min-h-[100dvh] relative overflow-hidden"
       style={{ 
-        background: '#BDD7FF',
+        background: '#BDE1FF',
         fontFamily: "'DM Sans', sans-serif",
       }}
     >
