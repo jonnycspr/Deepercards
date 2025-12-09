@@ -9,6 +9,7 @@ import ConversationJournal from '@/components/ConversationJournal';
 import Onboarding from '@/components/Onboarding';
 import { useLocalStorage, defaultProgress, UserProgress } from '@/lib/useLocalStorage';
 import type { Category, Question } from '@shared/schema';
+import deeperLogo from '@assets/Deeper_Logo_Blue_1765292365506.png';
 
 type ActivePanel = 'cards' | 'filter' | 'journal';
 
@@ -140,7 +141,13 @@ export default function Home() {
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className="flex-1 flex flex-col pt-6 pb-24 px-4"
             >
-              <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">Deeper</h1>
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={deeperLogo} 
+                  alt="Deeper" 
+                  className="h-10 object-contain"
+                />
+              </div>
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                   <motion.div 
