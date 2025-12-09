@@ -128,7 +128,6 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
         style={{
           backgroundColor: borderColor,
           padding: `${borderWidth}px`,
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
         }}
       >
         <motion.div
@@ -190,8 +189,8 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
             </p>
           </div>
 
-          {/* Question text - larger and centered */}
-          <div className="flex-1 flex items-center justify-center px-10 relative z-10">
+          {/* Question text - absolutely centered */}
+          <div className="absolute inset-0 flex items-center justify-center px-10 z-10">
             <p 
               className="text-3xl font-semibold text-center leading-snug"
               style={{ 

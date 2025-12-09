@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ArrowRight, ArrowLeft, Check, Clock, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import deeperLogo from '@assets/Light_Blue_Deeper_1765293060014.png';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -11,7 +12,7 @@ const steps = [
   {
     title: 'Welcome to Deeper',
     description: 'Build meaningful conversations with your partner through faith-based discussion cards.',
-    icon: Heart,
+    animation: 'logo',
   },
   {
     title: 'Swipe Right',
@@ -39,7 +40,6 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   };
 
   const step = steps[currentStep];
-  const Icon = step.icon;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#BDE1FF' }}>
@@ -92,15 +92,15 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     </div>
                   </motion.div>
                 </motion.div>
-              ) : (
+              ) : step.animation === 'logo' ? (
                 <motion.div
-                  className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center"
+                  className="mx-auto flex items-center justify-center"
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <Icon className="w-16 h-16 text-white" />
+                  <img src={deeperLogo} alt="Deeper" className="h-24 object-contain" />
                 </motion.div>
-              )}
+              ) : null}
             </div>
 
             <h1 className="text-2xl font-bold mb-4">{step.title}</h1>
