@@ -52,6 +52,19 @@ export async function runMigrations() {
       console.log("[migrate] Category customization columns added");
     }
     
+    // Add icon_image_url column for separate icon image
+    const iconImageColumn = await db.execute(sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'categories' AND column_name = 'icon_image_url'
+    `);
+    
+    if (!iconImageColumn.rows || iconImageColumn.rows.length === 0) {
+      console.log("[migrate] Adding icon_image_url column...");
+      await db.execute(sql`ALTER TABLE categories ADD COLUMN IF NOT EXISTS icon_image_url TEXT`);
+      console.log("[migrate] icon_image_url column added");
+    }
+    
     console.log("[migrate] Schema is up to date");
   } catch (error) {
     console.error("[migrate] Migration error:", error);

@@ -166,9 +166,9 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
                 backgroundColor: 'rgba(0, 0, 0, 0.15)',
               }}
             >
-              {category.imageUrl ? (
+              {category.iconImageUrl ? (
                 <img 
-                  src={category.imageUrl} 
+                  src={category.iconImageUrl} 
                   alt={category.name}
                   className="w-full h-full object-cover rounded-[20px]"
                 />

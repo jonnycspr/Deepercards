@@ -13,6 +13,7 @@ export interface Category {
   borderColor?: string | null;
   borderWidth?: number | null;
   imageUrl?: string | null;
+  iconImageUrl?: string | null;
 }
 
 export const defaultCategories: Category[] = [

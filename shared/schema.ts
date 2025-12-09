@@ -33,6 +33,7 @@ export const categories = pgTable("categories", {
   borderColor: text("border_color").default("#FFFFFF"),
   borderWidth: integer("border_width").default(8),
   imageUrl: text("image_url"),
+  iconImageUrl: text("icon_image_url"),
 });
 
 export const categoriesRelations = relations(categories, ({ many }) => ({

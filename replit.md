@@ -127,3 +127,5 @@ All categories use white borders (#FFFFFF, 8px width) for the card design.
   - Admin can upload PNG images directly for category icons
   - ObjectUploader component using Uppy for file management
   - New API endpoints: /api/objects/upload, /api/admin/categories/:id/icon
+  - Separate `iconImageUrl` field for the icon placeholder (top-left of card)
+  - `imageUrl` field is used for full card background fill when fillType is "image"

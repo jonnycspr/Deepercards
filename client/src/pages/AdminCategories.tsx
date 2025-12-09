@@ -75,6 +75,7 @@ export default function AdminCategories() {
         borderColor: editCategory.borderColor,
         borderWidth: editCategory.borderWidth,
         imageUrl: editCategory.imageUrl,
+        iconImageUrl: editCategory.iconImageUrl,
       },
     });
   };
@@ -400,6 +401,68 @@ export default function AdminCategories() {
                               </div>
 
                               <div className="space-y-4 border-t pt-4">
+                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Icon Image (Top-Left Placeholder)</h3>
+                                <p className="text-xs text-muted-foreground">This image appears in the small placeholder on the top-left of the card</p>
+                                
+                                <div className="space-y-2">
+                                  <Label>Upload Icon Image</Label>
+                                  <ObjectUploader
+                                    maxNumberOfFiles={1}
+                                    maxFileSize={5242880}
+                                    onGetUploadParameters={async () => {
+                                      const response = await apiRequest('POST', '/api/objects/upload');
+                                      const data = await response.json();
+                                      return {
+                                        method: 'PUT' as const,
+                                        url: data.uploadURL,
+                                      };
+                                    }}
+                                    onComplete={async (result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                                      if (result.successful && result.successful.length > 0) {
+                                        const uploadedUrl = result.successful[0].uploadURL;
+                                        if (uploadedUrl && editCategory) {
+                                          setEditCategory({ ...editCategory, iconImageUrl: uploadedUrl });
+                                          toast({ title: 'Icon image uploaded!' });
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Upload className="w-4 h-4" />
+                                      <span>Upload Icon PNG</span>
+                                    </div>
+                                  </ObjectUploader>
+                                </div>
+                                
+                                <div className="text-xs text-muted-foreground text-center">or enter URL manually</div>
+                                
+                                <div className="space-y-2">
+                                  <Label>Icon Image URL</Label>
+                                  <Input
+                                    value={editCategory.iconImageUrl || ''}
+                                    onChange={(e) =>
+                                      setEditCategory({ ...editCategory, iconImageUrl: e.target.value })
+                                    }
+                                    placeholder="https://example.com/icon.png"
+                                    data-testid="input-icon-image-url"
+                                  />
+                                </div>
+                                
+                                {editCategory.iconImageUrl && (
+                                  <div className="space-y-2">
+                                    <Label>Icon Preview</Label>
+                                    <div className="w-16 h-20 rounded-[20px] border overflow-hidden bg-muted flex items-center justify-center">
+                                      <img 
+                                        src={editCategory.iconImageUrl} 
+                                        alt="Icon preview"
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="space-y-4 border-t pt-4">
                                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Text Color</h3>
                                 <div className="space-y-2">
                                   <Label>Text Color</Label>
@@ -474,16 +537,31 @@ export default function AdminCategories() {
                                   }}
                                 >
                                   <div
-                                    className="rounded-[24px] p-6 min-h-[200px] flex flex-col"
+                                    className="rounded-[24px] p-6 min-h-[200px] flex flex-col relative"
                                     style={{
                                       background: getCardBackground(editCategory),
                                       backgroundSize: 'cover',
                                       backgroundPosition: 'center',
                                     }}
                                   >
-                                    <div className="flex-1 flex flex-col items-center justify-center">
+                                    {/* Top section with icon and category name */}
+                                    <div className="flex items-start justify-between mb-4">
+                                      <div 
+                                        className="w-10 h-12 rounded-[12px] flex items-center justify-center overflow-hidden"
+                                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
+                                      >
+                                        {editCategory.iconImageUrl ? (
+                                          <img 
+                                            src={editCategory.iconImageUrl} 
+                                            alt="Icon"
+                                            className="w-full h-full object-cover"
+                                          />
+                                        ) : (
+                                          <div className="w-5 h-5 rounded-full bg-white/30" />
+                                        )}
+                                      </div>
                                       <p 
-                                        className="text-2xl font-semibold text-center"
+                                        className="text-sm font-medium text-right"
                                         style={{ 
                                           color: editCategory.textColor || '#FFFFFF',
                                           fontFamily: "'DM Sans', sans-serif",
@@ -491,8 +569,10 @@ export default function AdminCategories() {
                                       >
                                         {editCategory.name}
                                       </p>
+                                    </div>
+                                    <div className="flex-1 flex flex-col items-center justify-center">
                                       <p 
-                                        className="mt-4 text-base text-center opacity-90"
+                                        className="text-lg font-semibold text-center"
                                         style={{ 
                                           color: editCategory.textColor || '#FFFFFF',
                                           fontFamily: "'DM Sans', sans-serif",
@@ -534,20 +614,34 @@ export default function AdminCategories() {
                   style={{
                     backgroundColor: editCategory.borderColor || '#FFFFFF',
                     padding: `${editCategory.borderWidth || 8}px`,
-                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
                   }}
                 >
                   <div
-                    className="rounded-[24px] p-6 min-h-[300px] flex flex-col"
+                    className="rounded-[24px] p-6 min-h-[300px] flex flex-col relative"
                     style={{
                       background: getCardBackground(editCategory),
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}
                   >
-                    <div className="flex-1 flex flex-col items-center justify-center">
+                    {/* Top section with icon and category name */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div 
+                        className="w-14 h-[70px] rounded-[16px] flex items-center justify-center overflow-hidden"
+                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
+                      >
+                        {editCategory.iconImageUrl ? (
+                          <img 
+                            src={editCategory.iconImageUrl} 
+                            alt="Icon"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-white/30" />
+                        )}
+                      </div>
                       <p 
-                        className="text-3xl font-semibold text-center"
+                        className="text-lg font-medium text-right"
                         style={{ 
                           color: editCategory.textColor || '#FFFFFF',
                           fontFamily: "'DM Sans', sans-serif",
@@ -555,8 +649,10 @@ export default function AdminCategories() {
                       >
                         {editCategory.name}
                       </p>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center justify-center">
                       <p 
-                        className="mt-6 text-xl text-center opacity-90 max-w-[280px]"
+                        className="text-2xl font-semibold text-center max-w-[280px]"
                         style={{ 
                           color: editCategory.textColor || '#FFFFFF',
                           fontFamily: "'DM Sans', sans-serif",
