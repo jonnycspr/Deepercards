@@ -140,7 +140,7 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="flex-1 flex flex-col pt-6 pb-24 px-4"
+              className="flex-1 flex flex-col pt-6 pb-32 px-4"
             >
               <div className="flex justify-center mb-4">
                 <DeeperLogo color={settings.logoColor} className="h-16" />
