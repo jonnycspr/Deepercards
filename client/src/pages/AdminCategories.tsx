@@ -9,10 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
-import { ArrowLeft, Pencil, GripVertical } from 'lucide-react';
+import { ArrowLeft, Pencil, GripVertical, Upload, Image } from 'lucide-react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { ObjectUploader } from '@/components/ObjectUploader';
 import type { Category } from '@shared/schema';
+import type { UploadResult } from '@uppy/core';
 
 export default function AdminCategories() {
   const [, setLocation] = useLocation();
@@ -319,16 +321,80 @@ export default function AdminCategories() {
                                 )}
 
                                 {editCategory.fillType === 'image' && (
-                                  <div className="space-y-2">
-                                    <Label>Image URL</Label>
-                                    <Input
-                                      value={editCategory.imageUrl || ''}
-                                      onChange={(e) =>
-                                        setEditCategory({ ...editCategory, imageUrl: e.target.value })
-                                      }
-                                      placeholder="https://example.com/image.jpg"
-                                      data-testid="input-image-url"
-                                    />
+                                  <div className="space-y-4">
+                                    <div className="space-y-2">
+                                      <Label>Upload Image</Label>
+                                      <ObjectUploader
+                                        maxNumberOfFiles={1}
+                                        maxFileSize={10485760}
+                                        onGetUploadParameters={async () => {
+                                          const response = await apiRequest('POST', '/api/objects/upload');
+                                          const data = await response.json();
+                                          return {
+                                            method: 'PUT' as const,
+                                            url: data.uploadURL,
+                                          };
+                                        }}
+                                        onComplete={async (result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                                          if (result.successful && result.successful.length > 0) {
+                                            const uploadedUrl = result.successful[0].uploadURL;
+                                            if (uploadedUrl && editCategory) {
+                                              try {
+                                                await apiRequest('PUT', `/api/admin/categories/${editCategory.id}/icon`, { iconUrl: uploadedUrl });
+                                                await queryClient.invalidateQueries({ queryKey: ['/api/admin/categories'] });
+                                                await queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+                                                setEditCategory({ ...editCategory, imageUrl: uploadedUrl });
+                                                toast({ title: 'Image uploaded successfully!' });
+                                              } catch (error) {
+                                                toast({ title: 'Failed to save image', variant: 'destructive' });
+                                              }
+                                            }
+                                          }
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Upload className="w-4 h-4" />
+                                          <span>Upload PNG Image</span>
+                                        </div>
+                                      </ObjectUploader>
+                                    </div>
+                                    
+                                    <div className="text-xs text-muted-foreground text-center">or</div>
+                                    
+                                    <div className="space-y-2">
+                                      <Label>Image URL (manual)</Label>
+                                      <Input
+                                        value={editCategory.imageUrl || ''}
+                                        onChange={(e) =>
+                                          setEditCategory({ ...editCategory, imageUrl: e.target.value })
+                                        }
+                                        placeholder="https://example.com/image.jpg"
+                                        data-testid="input-image-url"
+                                      />
+                                    </div>
+                                    
+                                    {editCategory.imageUrl && (
+                                      <div className="space-y-2">
+                                        <Label>Current Image Preview</Label>
+                                        <div className="w-20 h-20 rounded-lg border overflow-hidden bg-muted flex items-center justify-center">
+                                          {editCategory.imageUrl.startsWith('/objects/') ? (
+                                            <img 
+                                              src={editCategory.imageUrl} 
+                                              alt="Category icon"
+                                              className="w-full h-full object-cover"
+                                            />
+                                          ) : editCategory.imageUrl.startsWith('http') ? (
+                                            <img 
+                                              src={editCategory.imageUrl} 
+                                              alt="Category icon"
+                                              className="w-full h-full object-cover"
+                                            />
+                                          ) : (
+                                            <Image className="w-8 h-8 text-muted-foreground" />
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>

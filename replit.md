@@ -116,3 +116,14 @@ All categories use white borders (#FFFFFF, 8px width) for the card design.
     - Gradient colors and angle
     - Text color, border color, border width
     - Live card preview matching SwipeCard design
+- December 2024: SVG Logo & Theme Settings
+  - Deeper logo converted to SVG component with customizable color
+  - Theme Settings page at /admin/settings for logo and background color control
+  - Removed all shadows from cards for flat design
+  - Centered question text on cards
+  - Pulsing logo animation on onboarding screen
+- December 2024: File Upload for Category Icons
+  - Integrated Replit Object Storage for file uploads
+  - Admin can upload PNG images directly for category icons
+  - ObjectUploader component using Uppy for file management
+  - New API endpoints: /api/objects/upload, /api/admin/categories/:id/icon

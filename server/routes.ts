@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { insertQuestionSchema, insertCategorySchema } from "@shared/schema";
 import { z } from "zod";
+import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 
 declare module "express-session" {
   interface SessionData {
@@ -256,6 +257,71 @@ export async function registerRoutes(
       res.json(category);
     } catch (error) {
       res.status(500).json({ message: "Failed to update category order" });
+    }
+  });
+
+  app.get("/public-objects/:filePath(*)", async (req, res) => {
+    const filePath = req.params.filePath;
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const file = await objectStorageService.searchPublicObject(filePath);
+      if (!file) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      objectStorageService.downloadObject(file, res);
+    } catch (error) {
+      console.error("Error searching for public object:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/objects/:objectPath(*)", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(req.path);
+      objectStorageService.downloadObject(objectFile, res);
+    } catch (error) {
+      console.error("Error checking object access:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(500);
+    }
+  });
+
+  app.post("/api/objects/upload", requireAdmin, async (req, res) => {
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getObjectEntityUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Error getting upload URL:", error);
+      res.status(500).json({ error: "Failed to get upload URL" });
+    }
+  });
+
+  app.put("/api/admin/categories/:id/icon", requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const { iconUrl } = req.body;
+      
+      if (!iconUrl) {
+        return res.status(400).json({ message: "iconUrl is required" });
+      }
+
+      const objectStorageService = new ObjectStorageService();
+      const normalizedPath = objectStorageService.normalizeObjectEntityPath(iconUrl);
+
+      const category = await storage.updateCategory(id, { imageUrl: normalizedPath });
+      
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+      
+      res.json(category);
+    } catch (error) {
+      console.error("Error updating category icon:", error);
+      res.status(500).json({ message: "Failed to update category icon" });
     }
   });
 
