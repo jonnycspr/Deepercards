@@ -138,8 +138,9 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="flex-1 flex flex-col pt-8 pb-24 px-4"
+              className="flex-1 flex flex-col pt-6 pb-24 px-4"
             >
+              <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">Deeper</h1>
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                   <motion.div 
