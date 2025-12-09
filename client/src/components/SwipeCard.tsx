@@ -101,7 +101,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
 
   const textColor = category.textColor || '#FFFFFF';
   const borderColor = category.borderColor || '#FFFFFF';
-  const borderWidth = 32; // Fixed 32px border as per Figma design
+  const borderWidth = 16; // Fixed 16px border
 
   return (
     <motion.div
