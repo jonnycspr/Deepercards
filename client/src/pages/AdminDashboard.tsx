@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,6 +52,12 @@ export default function AdminDashboard() {
     }
   };
 
+  useEffect(() => {
+    if (!sessionLoading && !session?.isAdmin) {
+      setLocation('/admin');
+    }
+  }, [sessionLoading, session, setLocation]);
+
   if (sessionLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -63,7 +70,6 @@ export default function AdminDashboard() {
   }
 
   if (!session?.isAdmin) {
-    setLocation('/admin');
     return null;
   }
 
