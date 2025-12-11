@@ -146,10 +146,9 @@ export default function Home() {
                 <DeeperLogo color={settings.logoColor} className="h-16" />
               </div>
               <div 
-                className="flex-1"
+                className="flex-1 pb-3"
                 style={{ 
-                  maxHeight: 'calc(100dvh - 240px)',
-                  minHeight: '320px',
+                  height: 'calc(100dvh - 200px)',
                 }}
               >
                 {isLoading ? (
