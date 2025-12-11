@@ -97,7 +97,7 @@ export default function CardStack({
           return (
             <motion.div
               key={question.id}
-              className="absolute inset-x-0"
+              className="absolute inset-x-0 top-0 bottom-0"
               initial={{ 
                 scale: cardScale - STACK_SCALE_DIFF,
                 y: yOffset + STACK_OFFSET,

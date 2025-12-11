@@ -124,7 +124,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
       whileDrag={{ cursor: 'grabbing' }}
     >
       <div
-        className="relative rounded-[32px] h-[calc(100dvh-180px)] max-h-[600px] min-h-[400px] flex flex-col overflow-hidden"
+        className="relative rounded-[32px] h-full flex flex-col overflow-hidden"
         style={{
           backgroundColor: borderColor,
           padding: `${borderWidth}px`,

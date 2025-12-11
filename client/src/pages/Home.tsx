@@ -145,25 +145,33 @@ export default function Home() {
               <div className="flex justify-center mb-4">
                 <DeeperLogo color={settings.logoColor} className="h-16" />
               </div>
-              {isLoading ? (
-                <div className="flex-1 flex items-center justify-center">
-                  <motion.div 
-                    className="text-gray-600 text-lg font-medium"
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    Loading cards...
-                  </motion.div>
-                </div>
-              ) : (
-                <CardStack
-                  questions={transformedQuestions}
-                  categories={transformedCategories}
-                  progress={progress}
-                  onSwipeRight={handleSwipeRight}
-                  onSwipeLeft={handleSwipeLeft}
-                />
-              )}
+              <div 
+                className="flex-1"
+                style={{ 
+                  maxHeight: 'calc(100dvh - 240px)',
+                  minHeight: '320px',
+                }}
+              >
+                {isLoading ? (
+                  <div className="h-full flex items-center justify-center">
+                    <motion.div 
+                      className="text-gray-600 text-lg font-medium"
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      Loading cards...
+                    </motion.div>
+                  </div>
+                ) : (
+                  <CardStack
+                    questions={transformedQuestions}
+                    categories={transformedCategories}
+                    progress={progress}
+                    onSwipeRight={handleSwipeRight}
+                    onSwipeLeft={handleSwipeLeft}
+                  />
+                )}
+              </div>
             </motion.div>
           )}
 
