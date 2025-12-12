@@ -82,7 +82,7 @@ export default function CardStack({
   }
 
   return (
-    <div className="relative h-full w-full" data-testid="card-stack">
+    <div className="card-stack-container relative h-full w-full flex flex-col" data-testid="card-stack" style={{ borderWidth: 0, borderStyle: 'none', borderColor: 'rgba(0, 0, 0, 0)', borderImage: 'none' }}>
       <AnimatePresence initial={false}>
         {visibleCards.map((question, index) => {
           const category = categories.find(c => c.id === question.categoryId);
@@ -97,7 +97,7 @@ export default function CardStack({
           return (
             <motion.div
               key={question.id}
-              className="absolute inset-x-0"
+              className="card-stack-item absolute inset-x-0 h-full"
               initial={{ 
                 scale: cardScale - STACK_SCALE_DIFF,
                 y: yOffset + STACK_OFFSET,

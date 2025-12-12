@@ -39,6 +39,11 @@ export default function Home() {
     setShowOnboarding(false);
   };
 
+  const handleShowOnboarding = () => {
+    Cookies.remove('deeper-onboarding-complete');
+    setShowOnboarding(true);
+  };
+
   const handleSwipeRight = (questionId: number) => {
     setProgress(prev => ({
       ...prev,
@@ -142,8 +147,18 @@ export default function Home() {
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className="flex-1 flex flex-col pt-6 pb-32 px-4"
             >
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-4 relative">
                 <DeeperLogo color={settings.logoColor} className="h-16" />
+                {/* Development-only button to show onboarding */}
+                {process.env.NODE_ENV === 'development' && (
+                  <button
+                    onClick={handleShowOnboarding}
+                    className="absolute top-0 right-0 text-xs text-gray-500 hover:text-gray-700 bg-white/50 px-2 py-1 rounded"
+                    title="Show Onboarding (Dev Only)"
+                  >
+                    Onboarding
+                  </button>
+                )}
               </div>
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">

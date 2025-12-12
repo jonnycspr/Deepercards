@@ -107,7 +107,7 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
     <motion.div
       ref={ref}
       data-testid={`card-question-${question.id}`}
-      className="absolute w-full touch-none select-none"
+      className="card-motion-wrapper absolute w-full touch-none select-none h-full"
       style={{
         x,
         y,
@@ -124,10 +124,16 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
       whileDrag={{ cursor: 'grabbing' }}
     >
       <div
-        className="relative rounded-[32px] h-[calc(100dvh-180px)] max-h-[600px] min-h-[400px] flex flex-col overflow-hidden"
+        className="card-border-wrapper relative rounded-[32px] flex flex-col overflow-hidden"
         style={{
           backgroundColor: borderColor,
           padding: `${borderWidth}px`,
+          height: '100%',
+          minHeight: '400px',
+          maxHeight: '600px',
+          borderWidth: '1px',
+          borderColor: 'rgba(212, 212, 212, 1)',
+          borderStyle: 'solid',
         }}
       >
         <motion.div
@@ -158,12 +164,15 @@ const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(({
           )}
 
           {/* Top section: Image placeholder left, category name right */}
-          <div className="flex items-center justify-between px-8 pt-6 pb-4 relative z-10">
+          <div className="card-header flex items-center justify-between px-8 pt-6 pb-4 relative z-10" style={{ width: '100%', paddingLeft: '8px' }}>
             {/* Image placeholder */}
             <div 
-              className="w-16 h-20 rounded-[20px] flex items-center justify-center"
+              className="card-header-icon w-16 h-20 rounded-[20px] flex items-center justify-center"
               style={{ 
-                backgroundColor: 'rgba(0, 0, 0, 0.15)',
+                height: 'fit-content',
+                width: 'fit-content',
+                maxWidth: '64px',
+                alignItems: 'flex-start',
               }}
             >
               {category.iconImageUrl ? (

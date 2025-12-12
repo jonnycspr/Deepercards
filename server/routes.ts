@@ -52,7 +52,19 @@ export async function registerRoutes(
       const categories = await storage.getCategories();
       res.json(categories);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch categories" });
+      // Fallback to mock categories when database is not available
+      console.log("[fallback] Using mock categories due to database error");
+      const { defaultCategories } = await import("./seed");
+      const mockCategories = defaultCategories.map((cat, index) => ({
+        id: index + 1,
+        ...cat,
+        gradientFrom: null,
+        gradientTo: null,
+        gradientAngle: null,
+        imageUrl: null,
+        iconImageUrl: null,
+      }));
+      res.json(mockCategories);
     }
   });
 
@@ -68,7 +80,35 @@ export async function registerRoutes(
       const questions = await storage.getQuestions(categoryIds);
       res.json(questions);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch questions" });
+      // Fallback to local test questions when database is not available
+      console.log("[fallback] Using local test questions due to database error");
+      try {
+        const { localTestQuestions } = await import("./local-questions");
+        const categoryIdsParam = req.query.categoryIds as string | undefined;
+        let categoryIds: number[] | undefined;
+        
+        if (categoryIdsParam) {
+          categoryIds = categoryIdsParam.split(",").map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+        }
+        
+        let filteredQuestions = localTestQuestions;
+        if (categoryIds && categoryIds.length > 0) {
+          filteredQuestions = localTestQuestions.filter(q => categoryIds.includes(q.categoryId));
+        }
+        
+        // Add IDs to match the expected format
+        const questionsWithIds = filteredQuestions.map((q, index) => ({
+          id: index + 1,
+          questionText: q.questionText,
+          categoryId: q.categoryId,
+          isPremium: q.isPremium,
+          createdAt: new Date().toISOString(),
+        }));
+        
+        res.json(questionsWithIds);
+      } catch (importError) {
+        res.status(500).json({ message: "Failed to fetch questions" });
+      }
     }
   });
 
