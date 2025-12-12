@@ -119,6 +119,7 @@ export default function Home() {
     borderColor: c.borderColor,
     borderWidth: c.borderWidth,
     imageUrl: c.imageUrl,
+    iconImageUrl: c.iconImageUrl,
   }));
 
   const transformedQuestions = questions.map(q => ({
