@@ -6,6 +6,8 @@ import { storage } from "./storage";
 import { insertQuestionSchema, insertCategorySchema } from "@shared/schema";
 import { z } from "zod";
 import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
+import fs from "fs";
+import path from "path";
 
 declare module "express-session" {
   interface SessionData {
@@ -48,17 +50,55 @@ export async function registerRoutes(
   );
 
   app.get("/category-icons/:fileName", async (req, res) => {
+    // Decode the filename in case it's URL-encoded
+    const fileName = decodeURIComponent(req.params.fileName);
     const objectStorageService = new ObjectStorageService();
+    
+    // First, try to serve from static files (production) or public folder (development)
     try {
-      const filePath = `category-icons/${req.params.fileName}`;
+      let staticPath: string | null = null;
+      
+      if (process.env.NODE_ENV === "production") {
+        // In production, check dist/public/category-icons
+        const distPath = path.resolve(__dirname, "public", "category-icons", fileName);
+        if (fs.existsSync(distPath)) {
+          staticPath = distPath;
+        }
+      } else {
+        // In development, check client/public/category-icons
+        const clientPath = path.resolve(__dirname, "..", "client", "public", "category-icons", fileName);
+        if (fs.existsSync(clientPath)) {
+          staticPath = clientPath;
+        }
+      }
+      
+      if (staticPath) {
+        // Determine content type based on file extension
+        const ext = path.extname(fileName).toLowerCase();
+        const contentType = ext === ".png" ? "image/png" : 
+                           ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" :
+                           ext === ".svg" ? "image/svg+xml" :
+                           "application/octet-stream";
+        
+        res.setHeader("Content-Type", contentType);
+        res.setHeader("Cache-Control", "public, max-age=3600");
+        return res.sendFile(staticPath);
+      }
+    } catch (error) {
+      console.error("Error serving category icon from static files:", error);
+    }
+    
+    // Fallback to object storage
+    try {
+      const filePath = `category-icons/${fileName}`;
       const file = await objectStorageService.searchPublicObject(filePath);
       if (!file) {
         return res.status(404).json({ error: "Icon not found" });
       }
       objectStorageService.downloadObject(file, res);
     } catch (error) {
-      console.error("Error serving category icon:", error);
-      return res.status(500).json({ error: "Internal server error" });
+      console.error("Error serving category icon from object storage:", error);
+      return res.status(404).json({ error: "Icon not found" });
     }
   });
 
