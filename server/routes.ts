@@ -47,6 +47,21 @@ export async function registerRoutes(
     })
   );
 
+  app.get("/category-icons/:fileName", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const filePath = `category-icons/${req.params.fileName}`;
+      const file = await objectStorageService.searchPublicObject(filePath);
+      if (!file) {
+        return res.status(404).json({ error: "Icon not found" });
+      }
+      objectStorageService.downloadObject(file, res);
+    } catch (error) {
+      console.error("Error serving category icon:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   app.get("/api/categories", async (req, res) => {
     try {
       const categories = await storage.getCategories();
