@@ -135,35 +135,8 @@ export async function registerRoutes(
       const questions = await storage.getQuestions(categoryIds);
       res.json(questions);
     } catch (error) {
-      // Fallback to local test questions when database is not available
-      console.log("[fallback] Using local test questions due to database error");
-      try {
-        const { localTestQuestions } = await import("./local-questions");
-        const categoryIdsParam = req.query.categoryIds as string | undefined;
-        let categoryIds: number[] | undefined;
-        
-        if (categoryIdsParam) {
-          categoryIds = categoryIdsParam.split(",").map(id => parseInt(id, 10)).filter(id => !isNaN(id));
-        }
-        
-        let filteredQuestions = localTestQuestions;
-        if (categoryIds && categoryIds.length > 0) {
-          filteredQuestions = localTestQuestions.filter(q => categoryIds.includes(q.categoryId));
-        }
-        
-        // Add IDs to match the expected format
-        const questionsWithIds = filteredQuestions.map((q, index) => ({
-          id: index + 1,
-          questionText: q.questionText,
-          categoryId: q.categoryId,
-          isPremium: q.isPremium,
-          createdAt: new Date().toISOString(),
-        }));
-        
-        res.json(questionsWithIds);
-      } catch (importError) {
-        res.status(500).json({ message: "Failed to fetch questions" });
-      }
+      console.error("Error fetching questions:", error);
+      res.status(500).json({ message: "Failed to fetch questions" });
     }
   });
 
